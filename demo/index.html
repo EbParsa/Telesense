@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>tele.js — live demo</title>
+  <style>
+    :root {
+      --bg:       #0d1117;
+      --surface:  #161b22;
+      --border:   #30363d;
+      --text:     #e6edf3;
+      --muted:    #8b949e;
+      --accent:   #58a6ff;
+      --green:    #3fb950;
+      --amber:    #d29922;
+      --red:      #f85149;
+      --purple:   #bc8cff;
+      --radius:   10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; padding: 0 0 80px;
+      font-size: 15px; line-height: 1.6;
+    }
+
+    /* ── hero ── */
+    .hero {
+      text-align: center;
+      padding: 64px 24px 48px;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 700; letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+    .hero p { color: var(--muted); max-width: 520px; margin: 0 auto 28px; font-size: 16px; }
+    .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+    .badge {
+      font-size: 12px; padding: 4px 12px; border-radius: 20px;
+      border: 1px solid var(--border); color: var(--muted);
+      font-family: ui-monospace, monospace;
+    }
+    .install-block {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 12px 20px;
+      font-family: ui-monospace, monospace; font-size: 14px;
+    }
+    .install-block code { color: var(--accent); }
+    .copy-btn {
+      background: none; border: 1px solid var(--border); color: var(--muted);
+      border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 12px;
+      transition: all .15s;
+    }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── layout ── */
+    .shell { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+    h2 { font-size: 18px; font-weight: 600; margin: 40px 0 16px; color: var(--text); }
+
+    /* ── cards ── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+    }
+    .card-title {
+      font-size: 13px; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .6px; margin-bottom: 16px;
+    }
+
+    /* ── metrics ── */
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 32px 0 20px; }
+    @media (max-width: 600px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
+    .metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+    .metric-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
+    .metric-value { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text); }
+
+    /* ── heatmap ── */
+    #heatmap-canvas {
+      width: 100%; height: 200px; background: #0b0e14;
+      border-radius: 8px; border: 1px solid var(--border); display: block;
+    }
+
+    /* ── event stream ── */
+    .stream {
+      height: 300px; overflow-y: auto; font-family: ui-monospace, monospace;
+      font-size: 12px; line-height: 1.8;
+      background: #0b0e14; border-radius: 8px; border: 1px solid var(--border);
+      padding: 12px;
+    }
+    .ev-row { display: flex; gap: 10px; border-bottom: 1px solid #1e2530; padding: 4px 0; }
+    .ev-ts   { color: var(--muted); flex-shrink: 0; }
+    .ev-type { font-weight: 600; flex-shrink: 0; min-width: 90px; }
+    .ev-type.click      { color: var(--accent); }
+    .ev-type.scroll     { color: var(--green); }
+    .ev-type.mousemove  { color: #5c6bc0; }
+    .ev-type.keydown    { color: var(--amber); }
+    .ev-type.keyup      { color: var(--amber); }
+    .ev-type.visibility { color: var(--purple); }
+    .ev-type.resize     { color: var(--red); }
+    .ev-type.custom     { color: #26c6da; }
+    .ev-data { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* ── code blocks ── */
+    .code-block {
+      background: #0b0e14; border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px; margin: 8px 0;
+      font-family: ui-monospace, monospace; font-size: 13px; line-height: 1.8;
+      overflow-x: auto;
+    }
+    .kw   { color: var(--purple); }
+    .str  { color: #a5d6ff; }
+    .fn   { color: var(--amber); }
+    .cmt  { color: #485060; font-style: italic; }
+    .num  { color: var(--green); }
+
+    /* ── interactive playground ── */
+    .playground { display: flex; flex-direction: column; gap: 12px; }
+    .pg-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pg-btn {
+      padding: 8px 18px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text); cursor: pointer;
+      font-size: 13px; font-family: inherit; transition: all .15s;
+    }
+    .pg-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .pg-btn.danger:hover { border-color: var(--red); color: var(--red); }
+    .pg-btn.success { background: #0f2a14; border-color: var(--green); color: var(--green); }
+    .pg-input {
+      flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
+      background: #0b0e14; color: var(--text); font-size: 13px; font-family: inherit;
+      min-width: 180px;
+    }
+    .pg-input:focus { outline: none; border-color: var(--accent); }
+    .output-box {
+      background: #0b0e14; border: 1px solid var(--border); border-radius: 8px;
+      padding: 12px; font-family: ui-monospace, monospace; font-size: 12px;
+      color: var(--green); min-height: 48px; line-height: 1.8;
+      white-space: pre-wrap; word-break: break-all;
+    }
+
+    /* ── filter bar ── */
+    .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .filter-pill {
+      padding: 4px 12px; border-radius: 20px; font-size: 12px;
+      border: 1px solid var(--border); color: var(--muted); cursor: pointer;
+      transition: all .15s;
+    }
+    .filter-pill.active { border-color: var(--accent); color: var(--accent); background: #0d2a4a; }
+
+    /* ── footer ── */
+    footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 60px; }
+    footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>tele.js</h1>
+  <p>Zero-dependency behavioural telemetry SDK. One script tag, full event capture, clean JS API.</p>
+  <div class="badges">
+    <span class="badge">7.4 kB min</span>
+    <span class="badge">zero dependencies</span>
+    <span class="badge">UMD + ESM</span>
+    <span class="badge">TypeScript ready</span>
+    <span class="badge">MIT</span>
+  </div>
+  <div class="install-block">
+    <code id="install-text">&lt;script src="https://cdn.jsdelivr.net/npm/tele-js/dist/tele.umd.min.js"&gt;&lt;/script&gt;</code>
+    <button class="copy-btn" onclick="copyInstall()">copy</button>
+  </div>
+</div>
+
+<div class="shell">
+
+  <!-- live metrics -->
+  <div class="metrics">
+    <div class="metric"><div class="metric-label">Events captured</div><div class="metric-value" id="m-total">0</div></div>
+    <div class="metric"><div class="metric-label">Clicks</div>        <div class="metric-value" id="m-clicks">0</div></div>
+    <div class="metric"><div class="metric-label">Scroll depth</div>  <div class="metric-value" id="m-scroll">0%</div></div>
+    <div class="metric"><div class="metric-label">Queue size</div>    <div class="metric-value" id="m-queue">0</div></div>
+  </div>
+
+  <div class="two-col">
+
+    <!-- left: stream + filter -->
+    <div class="card">
+      <div class="card-title">Live event stream</div>
+      <div class="filter-bar" id="filters">
+        <div class="filter-pill active" data-type="all">all</div>
+        <div class="filter-pill" data-type="click">click</div>
+        <div class="filter-pill" data-type="scroll">scroll</div>
+        <div class="filter-pill" data-type="mousemove">mousemove</div>
+        <div class="filter-pill" data-type="keydown">keydown</div>
+        <div class="filter-pill" data-type="visibility">visibility</div>
+        <div class="filter-pill" data-type="custom">custom</div>
+      </div>
+      <div class="stream" id="stream"></div>
+    </div>
+
+    <!-- right: heatmap -->
+    <div class="card">
+      <div class="card-title">Mouse heatmap</div>
+      <canvas id="heatmap-canvas"></canvas>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px">
+        Move your mouse over the page — dots accumulate in real time.
+        <button class="pg-btn" style="margin-left:8px;padding:4px 12px;font-size:11px" onclick="clearHeatmap()">clear</button>
+      </p>
+    </div>
+
+  </div>
+
+  <!-- playground -->
+  <h2>API playground</h2>
+  <div class="card">
+    <div class="card-title">Try the API in your browser console — or use the buttons below</div>
+    <div class="playground">
+
+      <div class="pg-row">
+        <input class="pg-input" id="custom-type"  placeholder="event type e.g. pageview" value="pageview"/>
+        <input class="pg-input" id="custom-data"  placeholder='extra data e.g. {"url":"/home"}' value='{"url":"/home"}'/>
+        <button class="pg-btn" onclick="fireCustom()">tele.track()</button>
+      </div>
+
+      <div class="pg-row">
+        <button class="pg-btn" onclick="showQueue()">tele.getQueue()</button>
+        <button class="pg-btn" onclick="doFlush()">tele.flush()</button>
+        <button class="pg-btn danger" onclick="doReset()">tele.reset()</button>
+        <button class="pg-btn" onclick="showSession()">tele.sessionId</button>
+      </div>
+
+      <div class="output-box" id="pg-output">// output appears here</div>
+    </div>
+  </div>
+
+  <!-- code examples -->
+  <h2>Integration examples</h2>
+  <div class="two-col">
+
+    <div class="card">
+      <div class="card-title">Drop-in (script tag)</div>
+      <div class="code-block">
+<span class="cmt">&lt;!-- 1. Configure (optional) --&gt;</span>
+<span class="kw">&lt;script&gt;</span>
+  <span class="fn">window</span>.TELE_CONFIG = {
+    endpoint: <span class="str">'/telemetry'</span>,
+    flushInterval: <span class="num">5000</span>
+  };
+<span class="kw">&lt;/script&gt;</span>
+
+<span class="cmt">&lt;!-- 2. Load SDK --&gt;</span>
+<span class="kw">&lt;script</span> <span class="fn">src</span>=<span class="str">"tele.umd.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+
+<span class="cmt">&lt;!-- 3. tele is globally available --&gt;</span>
+<span class="kw">&lt;script&gt;</span>
+  tele.<span class="fn">on</span>(<span class="str">'click'</span>, ev =&gt; {
+    console.<span class="fn">log</span>(<span class="str">'clicked'</span>, ev.x, ev.y);
+  });
+<span class="kw">&lt;/script&gt;</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ES module / bundler</div>
+      <div class="code-block">
+<span class="kw">import</span> tele <span class="kw">from</span> <span class="str">'tele-js'</span>;
+
+tele.<span class="fn">config</span>({ endpoint: <span class="str">'/telemetry'</span> });
+
+<span class="cmt">// Subscribe to events</span>
+tele.<span class="fn">on</span>(<span class="str">'*'</span>, ev =&gt; analytics.<span class="fn">push</span>(ev));
+
+<span class="cmt">// Fire custom events</span>
+tele.<span class="fn">track</span>(<span class="str">'signup_complete'</span>, {
+  plan: <span class="str">'pro'</span>, userId: <span class="str">'u_123'</span>
+});
+
+<span class="cmt">// Custom transport (e.g. send to your own backend)</span>
+tele.<span class="fn">config</span>({
+  <span class="fn">onFlush</span>: events =&gt; myApi.<span class="fn">post</span>(events)
+});
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Multiple isolated instances</div>
+      <div class="code-block">
+<span class="kw">import</span> tele <span class="kw">from</span> <span class="str">'tele-js'</span>;
+
+<span class="cmt">// Separate sessions per user role</span>
+<span class="kw">const</span> adminTele = tele.<span class="fn">create</span>({
+  sessionId: <span class="str">`admin-${user.id}`</span>,
+  endpoint: <span class="str">'/admin-telemetry'</span>,
+  capture: { mousemove: <span class="kw">false</span> }
+});
+
+<span class="kw">const</span> guestTele = tele.<span class="fn">create</span>({
+  endpoint: <span class="str">'/guest-telemetry'</span>,
+  flushInterval: <span class="num">10000</span>
+});
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Selective capture + masking</div>
+      <div class="code-block">
+<span class="cmt">// Disable what you don't need</span>
+tele.<span class="fn">config</span>({
+  capture: {
+    mousemove: <span class="kw">false</span>, <span class="cmt">// skip heatmap data</span>
+    keydown:   <span class="kw">false</span>, <span class="cmt">// no keystroke logging</span>
+  }
+});
+
+<span class="cmt">// Sensitive fields auto-masked:</span>
+<span class="cmt">// &lt;input type="password"&gt;  → key: '[masked]'</span>
+<span class="cmt">// &lt;input name="card*"&gt;     → key: '[masked]'</span>
+<span class="cmt">// autocomplete="cc-*"      → key: '[masked]'</span>
+
+<span class="cmt">// Stop capture entirely</span>
+tele.<span class="fn">stop</span>();
+<span class="cmt">// Resume</span>
+tele.<span class="fn">start</span>();
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /.shell -->
+
+<footer>
+  <p>tele.js &nbsp;·&nbsp; <a href="https://github.com/your-org/tele-js">GitHub</a> &nbsp;·&nbsp; MIT License</p>
+</footer>
+
+<!-- Load the SDK itself (from dist sibling) -->
+<script src="../dist/tele.umd.js"></script>
+
+<script>
+// ── configure a custom transport so the demo works without a server ──────────
+
+tele.config({
+  onFlush: function(events) {
+    // In demo mode: keep a persistent log in localStorage
+    var key  = 'tele_demo_events';
+    var curr = JSON.parse(localStorage.getItem(key) || '[]');
+    var next = curr.concat(events).slice(-5000);
+    localStorage.setItem(key, JSON.stringify(next));
+  }
+});
+
+// ── metrics ───────────────────────────────────────────────────────────────────
+
+var totalEvents = 0, clickCount = 0, maxScroll = 0;
+var allEvents   = [];
+var activeFilter = 'all';
+
+function updateMetrics() {
+  document.getElementById('m-total').textContent  = totalEvents;
+  document.getElementById('m-clicks').textContent = clickCount;
+  document.getElementById('m-scroll').textContent = maxScroll + '%';
+  document.getElementById('m-queue').textContent  = tele.getQueue().length;
+}
+
+// ── heatmap ───────────────────────────────────────────────────────────────────
+
+var canvas = document.getElementById('heatmap-canvas');
+var ctx    = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width  = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function paintDot(x, y) {
+  var rel = canvas.getBoundingClientRect();
+  var cx  = (x - rel.left) * (canvas.width  / rel.width);
+  var cy  = (y - rel.top)  * (canvas.height / rel.height);
+  if (cx < 0 || cy < 0 || cx > canvas.width || cy > canvas.height) return;
+  ctx.fillStyle = 'rgba(88,166,255,0.18)';
+  ctx.beginPath();
+  ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function clearHeatmap() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// ── stream renderer ───────────────────────────────────────────────────────────
+
+function renderRow(ev) {
+  var stream = document.getElementById('stream');
+  var row    = document.createElement('div');
+  row.className = 'ev-row';
+  var typeClass = ['click','scroll','mousemove','keydown','keyup','visibility','resize'].includes(ev.type)
+    ? ev.type : 'custom';
+  var d = new Date(ev.ts);
+  var ts = d.toLocaleTimeString('en', { hour12: false }) + '.' + String(d.getMilliseconds()).padStart(3,'0');
+
+  // Summarise the data payload concisely
+  var summary = '';
+  if (ev.type === 'click')     summary = ev.button + ' @ ' + ev.x + ',' + ev.y;
+  else if (ev.type === 'scroll')    summary = 'y=' + ev.percentY + '%';
+  else if (ev.type === 'mousemove') summary = ev.x + ',' + ev.y;
+  else if (ev.type === 'keydown' || ev.type === 'keyup') summary = ev.key;
+  else if (ev.type === 'visibility') summary = ev.state;
+  else if (ev.type === 'resize') summary = ev.width + '×' + ev.height;
+  else summary = JSON.stringify(Object.fromEntries(
+    Object.entries(ev).filter(function(e){ return !['type','ts','sessionId','page'].includes(e[0]); })
+  ));
+
+  row.innerHTML =
+    '<span class="ev-ts">' + ts + '</span>' +
+    '<span class="ev-type ' + typeClass + '">' + ev.type + '</span>' +
+    '<span class="ev-data">' + summary + '</span>';
+
+  if (activeFilter === 'all' || activeFilter === typeClass) {
+    stream.insertBefore(row, stream.firstChild);
+    // Cap displayed rows
+    while (stream.childNodes.length > 200) stream.removeChild(stream.lastChild);
+  }
+}
+
+// ── subscribe ─────────────────────────────────────────────────────────────────
+
+tele.on('*', function(ev) {
+  totalEvents++;
+  allEvents.push(ev);
+  if (ev.type === 'click') clickCount++;
+  if (ev.type === 'scroll' && typeof ev.percentY === 'number') maxScroll = Math.max(maxScroll, ev.percentY);
+  if (ev.type === 'mousemove') paintDot(ev.x, ev.y);
+  renderRow(ev);
+  updateMetrics();
+});
+
+// ── filter pills ──────────────────────────────────────────────────────────────
+
+document.getElementById('filters').addEventListener('click', function(e) {
+  var pill = e.target.closest('.filter-pill');
+  if (!pill) return;
+  document.querySelectorAll('.filter-pill').forEach(function(p){ p.classList.remove('active'); });
+  pill.classList.add('active');
+  activeFilter = pill.dataset.type;
+
+  // Rebuild stream with current filter
+  var stream = document.getElementById('stream');
+  stream.innerHTML = '';
+  var filtered = allEvents.filter(function(ev){
+    if (activeFilter === 'all') return true;
+    var tc = ['click','scroll','mousemove','keydown','keyup','visibility','resize'].includes(ev.type) ? ev.type : 'custom';
+    return tc === activeFilter;
+  }).slice(-200).reverse();
+  filtered.forEach(renderRow);
+});
+
+// ── playground buttons ────────────────────────────────────────────────────────
+
+function out(text) {
+  document.getElementById('pg-output').textContent = text;
+}
+
+function fireCustom() {
+  var type  = document.getElementById('custom-type').value.trim() || 'custom';
+  var raw   = document.getElementById('custom-data').value.trim();
+  var data  = {};
+  try { data = JSON.parse(raw); } catch(_) { data = { raw: raw }; }
+  tele.track(type, data);
+  out('tele.track("' + type + '", ' + JSON.stringify(data, null, 2) + ')\n// ✓ event queued');
+}
+
+function showQueue() {
+  var q = tele.getQueue();
+  out('tele.getQueue() → ' + q.length + ' event(s)\n\n' + JSON.stringify(q.slice(-3), null, 2) + (q.length > 3 ? '\n…' : ''));
+}
+
+function doFlush() {
+  var before = tele.getQueue().length;
+  tele.flush();
+  out('tele.flush()\n// flushed ' + before + ' event(s) → onFlush transport');
+}
+
+function doReset() {
+  var before = tele.getQueue().length;
+  tele.reset();
+  out('tele.reset()\n// cleared ' + before + ' event(s) from queue (not sent)');
+  updateMetrics();
+}
+
+function showSession() {
+  out('tele.sessionId\n// → "' + tele.sessionId + '"');
+}
+
+function copyInstall() {
+  navigator.clipboard.writeText(document.getElementById('install-text').textContent);
+  var btn = document.querySelector('.copy-btn');
+  btn.textContent = 'copied!';
+  setTimeout(function(){ btn.textContent = 'copy'; }, 1500);
+}
+
+// ── update queue size every second ───────────────────────────────────────────
+setInterval(updateMetrics, 1000);
+</script>
+</body>
+</html>

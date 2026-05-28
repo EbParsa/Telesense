@@ -1,0 +1,66 @@
+{
+  "name": "tele-js",
+  "version": "1.0.0",
+  "description": "Lightweight, zero-dependency behavioural telemetry SDK. Drop one script tag — get clicks, scrolls, keypresses, heatmap data, and a clean JS API.",
+  "keywords": [
+    "telemetry",
+    "analytics",
+    "tracking",
+    "heatmap",
+    "behavioural",
+    "session",
+    "sdk",
+    "zero-dependency"
+  ],
+  "homepage": "https://github.com/your-org/tele-js#readme",
+  "bugs": {
+    "url": "https://github.com/your-org/tele-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-org/tele-js.git"
+  },
+  "license": "MIT",
+  "author": "your-name",
+  "main": "dist/tele.umd.js",
+  "module": "dist/tele.esm.js",
+  "browser": "dist/tele.umd.js",
+  "types": "dist/tele.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/tele.esm.js",
+      "require": "./dist/tele.umd.js",
+      "types": "./dist/tele.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src/tele.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "build:watch": "node scripts/build.js --watch",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
+    "lint": "eslint src/",
+    "prepublishOnly": "npm run build && npm test",
+    "size": "node -e \"const fs=require('fs');const s=fs.statSync('dist/tele.umd.js').size;console.log('UMD: '+s+' bytes / '+(s/1024).toFixed(1)+'kB')\"",
+    "demo": "node demo/server.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "transform": {}
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=16"
+  }
+}
