@@ -1,6 +1,6 @@
 {
   "name": "telesense",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Lightweight, zero-dependency behavioural telemetry SDK. Drop one script tag — get clicks, scrolls, keypresses, heatmap data, and a clean JS API.",
   "keywords": [
     "telemetry",
