@@ -1,5 +1,5 @@
-// tele.js v1.0.0 — ESM build
-// https://github.com/your-org/tele-js  |  MIT License
+// Telesense v1.0.0 — ESM build
+// https://github.com/EbParsa/Telesense  |  MIT License
 
 'use strict';
 

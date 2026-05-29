@@ -1,6 +1,6 @@
 /*!
- * tele.js v1.0.0 — Lightweight behavioural telemetry SDK
- * https://github.com/your-org/tele-js
+ * Telesense v1.0.0 — Lightweight behavioural telemetry SDK
+ * https://github.com/EbParsa/Telesense
  * MIT License
  */
 (function (global, factory) {

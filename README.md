@@ -1,20 +1,20 @@
-# tele.js
+# Telesense
 
 > Lightweight, zero-dependency behavioural telemetry SDK. Drop one script tag — get clicks, scrolls, keypresses, heatmap data, and a clean JS API.
 
-[![CI](https://github.com/your-org/tele-js/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/tele-js/actions)
-[![npm version](https://img.shields.io/npm/v/tele-js.svg)](https://www.npmjs.com/package/tele-js)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/tele-js)](https://bundlephobia.com/package/tele-js)
-[![license](https://img.shields.io/github/license/your-org/tele-js)](LICENSE)
+[![CI](https://github.com/EbParsa/Telesense/actions/workflows/ci.yml/badge.svg)](https://github.com/EbParsa/Telesense/actions)
+[![npm version](https://img.shields.io/npm/v/telesense.svg)](https://www.npmjs.com/package/telesense)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/telesense)](https://bundlephobia.com/package/telesense)
+[![license](https://img.shields.io/github/license/EbParsa/telesense)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-ready-blue?logo=typescript)](src/tele.d.ts)
 
-**[Live demo →](https://your-org.github.io/tele-js)**
+**[Live demo →](https://EbParsa.github.io/Telesense)**
 
 ---
 
-## Why tele.js?
+## Why Telesense?
 
-| | tele.js | Heap | Mixpanel | Hotjar |
+| | Telesense | Heap | Mixpanel | Hotjar |
 |---|---|---|---|---|
 | Self-hosted | ✅ | ❌ | ❌ | ❌ |
 | Zero dependencies | ✅ | ❌ | ❌ | ❌ |
@@ -39,7 +39,7 @@
 </script>
 
 <!-- 2. Load SDK -->
-<script src="https://cdn.jsdelivr.net/npm/tele-js/dist/tele.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/telesense/dist/tele.umd.min.js"></script>
 
 <!-- 3. tele is globally available -->
 <script>
@@ -50,11 +50,11 @@
 ### npm / bundler
 
 ```bash
-npm install tele-js
+npm install telesense
 ```
 
 ```js
-import tele from 'tele-js';
+import tele from 'telesense';
 
 tele.config({ endpoint: '/telemetry' });
 
@@ -259,7 +259,7 @@ PORT=4000 node demo/server.js
 Full types ship with the package — no `@types/` install needed.
 
 ```ts
-import tele, { TeleEvent, TeleConfig, TeleInstance } from 'tele-js';
+import tele, { TeleEvent, TeleConfig, TeleInstance } from 'telesense';
 
 tele.on('click', (ev: TeleEvent) => {
   console.log(ev.x, ev.y, ev.element?.tag);
@@ -277,8 +277,8 @@ tele.config(cfg);
 ## Local development
 
 ```bash
-git clone https://github.com/your-org/tele-js
-cd tele-js
+git clone https://github.com/EbParsa/telesense
+cd telesense
 npm install
 
 # Build (produces dist/)
@@ -308,4 +308,4 @@ npm run demo
 
 ## License
 
-[MIT](LICENSE) © your-name
+[MIT](LICENSE) © EbParsa

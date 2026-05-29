@@ -1,5 +1,5 @@
-// tele.js — TypeScript declarations
-// https://github.com/your-org/tele-js
+// Telesense — TypeScript declarations
+// https://github.com/EbParsa/Telesense
 
 export interface ElementSummary {
   tag: string;

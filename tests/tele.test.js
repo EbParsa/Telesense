@@ -1,5 +1,5 @@
 /**
- * tele.js — test suite
+ * Telesense — test suite
  * Run: npm test
  */
 

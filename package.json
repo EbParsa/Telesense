@@ -1,5 +1,5 @@
 {
-  "name": "tele-js",
+  "name": "telesense",
   "version": "1.0.0",
   "description": "Lightweight, zero-dependency behavioural telemetry SDK. Drop one script tag — get clicks, scrolls, keypresses, heatmap data, and a clean JS API.",
   "keywords": [
@@ -12,16 +12,16 @@
     "sdk",
     "zero-dependency"
   ],
-  "homepage": "https://github.com/your-org/tele-js#readme",
+  "homepage": "https://github.com/EbParsa/Telesense#readme",
   "bugs": {
-    "url": "https://github.com/your-org/tele-js/issues"
+    "url": "https://github.com/EbParsa/Telesense/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-org/tele-js.git"
+    "url": "git+https://github.com/EbParsa/Telesense.git"
   },
   "license": "MIT",
-  "author": "your-name",
+  "author": "EbParsa",
   "main": "dist/tele.umd.js",
   "module": "dist/tele.esm.js",
   "browser": "dist/tele.umd.js",

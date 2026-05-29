@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * tele.js dev server
+ * Telesense dev server
  * Serves the demo page and accepts telemetry POST requests.
  *
  * Usage:
@@ -135,7 +135,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log('\n🚀 tele.js dev server');
+  console.log('\n🚀 Telesense dev server');
   console.log(`   Demo:      http://localhost:${PORT}/`);
   console.log(`   Endpoint:  POST http://localhost:${PORT}/telemetry`);
   console.log(`   Events:    GET  http://localhost:${PORT}/events`);

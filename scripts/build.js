@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build.js — zero-dep build pipeline for tele-js
+ * build.js — zero-dep build pipeline for Telesense
  * Produces:
  *   dist/tele.umd.js      — UMD (browser <script> + CommonJS require)
  *   dist/tele.umd.min.js  — minified UMD
@@ -11,7 +11,7 @@
 const fs   = require('fs');
 const path = require('path');
 
-const SRC     = path.join(__dirname, '../src/tele.js');
+const SRC     = path.join(__dirname, '../src/Telesense');
 const TYPES   = path.join(__dirname, '../src/tele.d.ts');
 const DIST    = path.join(__dirname, '../dist');
 
@@ -31,8 +31,8 @@ const esmBody = src
   .replace(/\(function \(global, factory\) \{[\s\S]*?\}\)\(this, function \(\) \{/, '') // strip UMD header
   .replace(/\}\);?\s*$/, '');                               // strip UMD footer
 
-const esm = `// tele.js v1.0.0 — ESM build
-// https://github.com/your-org/tele-js  |  MIT License
+const esm = `// Telesense v1.0.0 — ESM build
+// https://github.com/EbParsa/Telesense  |  MIT License
 
 ${esmBody.trim()}
 
@@ -59,7 +59,7 @@ function minify(code) {
     .trim();
 }
 
-const banner = `/*! tele.js v1.0.0 | MIT | https://github.com/your-org/tele-js */\n`;
+const banner = `/*! Telesense v1.0.0 | MIT | https://github.com/EbParsa/Telesense */\n`;
 const umdMin = banner + minify(umd);
 
 // ── write ────────────────────────────────────────────────────────────────────
@@ -83,7 +83,7 @@ console.log('\n✅ Build complete:\n' + sizes.join('\n') + '\n');
 // ── watch mode ───────────────────────────────────────────────────────────────
 
 if (process.argv.includes('--watch')) {
-  console.log('👀 Watching src/tele.js …');
+  console.log('👀 Watching src/Telesense …');
   fs.watch(SRC, () => {
     console.log('  → rebuilding…');
     try {
