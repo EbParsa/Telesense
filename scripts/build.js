@@ -11,7 +11,7 @@
 const fs   = require('fs');
 const path = require('path');
 
-const SRC     = path.join(__dirname, '../src/Telesense');
+const SRC     = path.join(__dirname, '../src/tele.js');
 const TYPES   = path.join(__dirname, '../src/tele.d.ts');
 const DIST    = path.join(__dirname, '../dist');
 
