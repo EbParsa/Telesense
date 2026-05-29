@@ -36,8 +36,30 @@
 
   // ─── helpers ─────────────────────────────────────────────────────────────────
 
-  const uid = () =>
-    `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  const uid = () => {
+    const ts = Date.now().toString(36);
+
+    // Browser/Web Crypto path
+    if (typeof globalThis !== 'undefined' && globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function') {
+      const bytes = new Uint8Array(4);
+      globalThis.crypto.getRandomValues(bytes);
+      const rand = Array.from(bytes, b => b.toString(36)).join('').slice(0, 6).padEnd(6, '0');
+      return `${ts}-${rand}`;
+    }
+
+    // Node.js fallback
+    if (typeof require === 'function') {
+      try {
+        const nodeCrypto = require('crypto');
+        const bytes = nodeCrypto.randomBytes(4);
+        const rand = Array.from(bytes, b => b.toString(36)).join('').slice(0, 6).padEnd(6, '0');
+        return `${ts}-${rand}`;
+      } catch (e) { /* ignore and use final fallback */ }
+    }
+
+    // Final non-crypto fallback for very constrained environments
+    return `${ts}-000000`;
+  };
 
   const isSensitive = (el) => {
     if (!el || !el.tagName) return false;
