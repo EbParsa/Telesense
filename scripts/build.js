@@ -31,7 +31,7 @@ const esmBody = src
   .replace(/\(function \(global, factory\) \{[\s\S]*?\}\)\(this, function \(\) \{/, '') // strip UMD header
   .replace(/\}\);?\s*$/, '');                               // strip UMD footer
 
-const esm = `// Telesense v1.0.0 — ESM build
+const esm = `// Telesense v0.1.0 — ESM build
 // https://github.com/EbParsa/Telesense  |  MIT License
 
 ${esmBody.trim()}
@@ -59,7 +59,7 @@ function minify(code) {
     .trim();
 }
 
-const banner = `/*! Telesense v1.0.0 | MIT | https://github.com/EbParsa/Telesense */\n`;
+const banner = `/*! Telesense v0.1.0 | MIT | https://github.com/EbParsa/Telesense */\n`;
 const umdMin = banner + minify(umd);
 
 // ── write ────────────────────────────────────────────────────────────────────
