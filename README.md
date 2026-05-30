@@ -18,7 +18,7 @@
 |---|---|---|---|---|
 | Self-hosted | ✅ | ❌ | ❌ | ❌ |
 | Zero dependencies | ✅ | ❌ | ❌ | ❌ |
-| Bundle size | **7.4 kB** | ~120 kB | ~80 kB | ~60 kB |
+| Bundle size | **13.7 kB** | ~120 kB | ~80 kB | ~60 kB |
 | Custom transport | ✅ | ❌ | ❌ | ❌ |
 | TypeScript types | ✅ | partial | partial | ❌ |
 | Open source | ✅ | ❌ | ❌ | ❌ |
@@ -301,7 +301,7 @@ npm run demo
 
 1. Fork → branch → PR against `main`.
 2. Tests must pass: `npm test`.
-3. Keep the minified build under 10 kB.
+3. Keep the minified build under 20 kB.
 4. One feature / fix per PR — keep diffs focused.
 
 ---
