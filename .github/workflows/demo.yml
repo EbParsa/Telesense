@@ -1,0 +1,50 @@
+name: Deploy Demo
+
+on:
+  push:
+    branches: main
+    paths:
+      - src/**
+      - demo/**
+
+permissions:
+  contents: read
+
+jobs:
+  pages:
+    name: Deploy Demo
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+
+      - name: Build & Test
+        run: |
+          npm ci
+          npm run build
+          npm run test:ci
+
+      - name: Assemble pages artifact
+        run: |
+          mkdir -p public
+          cp -r demo/index.html public/index.html
+          cp -r dist/           public/dist/
+          # Write a minimal config.js for the demo (no secrets needed — uses onFlush)
+          echo 'window.TELE_CONFIG = {};' > public/config.js
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v5
