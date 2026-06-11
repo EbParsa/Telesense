@@ -18,7 +18,7 @@
 |---|---|---|---|---|
 | Self-hosted | ✅ | ❌ | ❌ | ❌ |
 | Zero dependencies | ✅ | ❌ | ❌ | ❌ |
-| Bundle size | **13.7 kB** | ~120 kB | ~80 kB | ~60 kB |
+| Bundle size | **<20 kB** | ~120 kB | ~80 kB | ~60 kB |
 | Custom transport | ✅ | ❌ | ❌ | ❌ |
 | TypeScript types | ✅ | partial | partial | ❌ |
 | Open source | ✅ | ❌ | ❌ | ❌ |

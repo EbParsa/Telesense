@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"/>
   <title>Telesense — live demo</title>
   <style>
     :root {
@@ -16,6 +16,7 @@
       --amber:    #d29922;
       --red:      #f85149;
       --purple:   #bc8cff;
+      --cyan:     #79c0ff;
       --radius:   10px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,6 +26,7 @@
       background: var(--bg); color: var(--text);
       min-height: 100vh; padding: 0 0 80px;
       font-size: 15px; line-height: 1.6;
+      touch-action: pan-x pan-y; /* Allow touch scrolling while capturing */
     }
 
     /* ── hero ── */
@@ -84,10 +86,11 @@
     .metric-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
     .metric-value { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text); }
 
-    /* ── heatmap ── */
+    /* ── heatmap / touch canvas ── */
     #heatmap-canvas {
       width: 100%; height: 200px; background: #0b0e14;
       border-radius: 8px; border: 1px solid var(--border); display: block;
+      touch-action: none;
     }
 
     /* ── event stream ── */
@@ -103,6 +106,9 @@
     .ev-type.click      { color: var(--accent); }
     .ev-type.scroll     { color: var(--green); }
     .ev-type.mousemove  { color: #5c6bc0; }
+    .ev-type.touchstart { color: var(--cyan); }
+    .ev-type.touchmove  { color: var(--cyan); }
+    .ev-type.touchend   { color: var(--cyan); }
     .ev-type.keydown    { color: var(--amber); }
     .ev-type.keyup      { color: var(--amber); }
     .ev-type.visibility { color: var(--purple); }
@@ -156,6 +162,13 @@
     }
     .filter-pill.active { border-color: var(--accent); color: var(--accent); background: #0d2a4a; }
 
+    /* ── device hint ── */
+    .device-hint {
+      background: rgba(88,166,255,0.1); border-left: 3px solid var(--accent);
+      padding: 12px; border-radius: 8px; margin-bottom: 20px;
+      font-size: 13px;
+    }
+
     /* ── footer ── */
     footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 60px; }
     footer a { color: var(--accent); text-decoration: none; }
@@ -167,10 +180,11 @@
   <h1>Telesense</h1>
   <p>Zero-dependency behavioural telemetry SDK. One script tag, full event capture, clean JS API.</p>
   <div class="badges">
-    <span class="badge">7.4 kB min</span>
+    <span class="badge">less than 20 kB</span>
     <span class="badge">zero dependencies</span>
     <span class="badge">UMD + ESM</span>
     <span class="badge">TypeScript ready</span>
+    <span class="badge">Touch support</span>
     <span class="badge">MIT</span>
   </div>
   <div class="install-block">
@@ -184,9 +198,13 @@
   <!-- live metrics -->
   <div class="metrics">
     <div class="metric"><div class="metric-label">Events captured</div><div class="metric-value" id="m-total">0</div></div>
-    <div class="metric"><div class="metric-label">Clicks</div>        <div class="metric-value" id="m-clicks">0</div></div>
+    <div class="metric"><div class="metric-label">Clicks/Taps</div>        <div class="metric-value" id="m-clicks">0</div></div>
     <div class="metric"><div class="metric-label">Scroll depth</div>  <div class="metric-value" id="m-scroll">0%</div></div>
     <div class="metric"><div class="metric-label">Queue size</div>    <div class="metric-value" id="m-queue">0</div></div>
+  </div>
+
+  <div class="device-hint" id="device-hint">
+    📱 <span id="device-type">Detecting device...</span> — Touch events are automatically captured.
   </div>
 
   <div class="two-col">
@@ -196,22 +214,23 @@
       <div class="card-title">Live event stream</div>
       <div class="filter-bar" id="filters">
         <div class="filter-pill active" data-type="all">all</div>
-        <div class="filter-pill" data-type="click">click</div>
+        <div class="filter-pill" data-type="click">click/tap</div>
+        <div class="filter-pill" data-type="touchstart">touchstart</div>
+        <div class="filter-pill" data-type="touchmove">touchmove</div>
+        <div class="filter-pill" data-type="touchend">touchend</div>
         <div class="filter-pill" data-type="scroll">scroll</div>
         <div class="filter-pill" data-type="mousemove">mousemove</div>
-        <div class="filter-pill" data-type="keydown">keydown</div>
-        <div class="filter-pill" data-type="visibility">visibility</div>
         <div class="filter-pill" data-type="custom">custom</div>
       </div>
       <div class="stream" id="stream"></div>
     </div>
 
-    <!-- right: heatmap -->
+    <!-- right: heatmap/touch -->
     <div class="card">
-      <div class="card-title">Mouse heatmap</div>
+      <div class="card-title">Interaction heatmap</div>
       <canvas id="heatmap-canvas"></canvas>
       <p style="font-size:12px;color:var(--muted);margin-top:10px">
-        Move your mouse over the page — dots accumulate in real time.
+        🖱️ Mouse moves / 👆 Touch drags — dots accumulate in real time.
         <button class="pg-btn" style="margin-left:8px;padding:4px 12px;font-size:11px" onclick="clearHeatmap()">clear</button>
       </p>
     </div>
@@ -316,6 +335,7 @@ tele.<span class="fn">config</span>({
 tele.<span class="fn">config</span>({
   capture: {
     mousemove: <span class="kw">false</span>, <span class="cmt">// skip heatmap data</span>
+    touchmove: <span class="kw">false</span>, <span class="cmt">// disable touch move tracking</span>
     keydown:   <span class="kw">false</span>, <span class="cmt">// no keystroke logging</span>
   }
 });
@@ -356,6 +376,19 @@ tele.config({
   }
 });
 
+// ── device detection ─────────────────────────────────────────────────────────
+function detectDevice() {
+  var isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  var hint = document.getElementById('device-type');
+  if (isTouch) {
+    hint.innerHTML = '📱 Touch device detected';
+    hint.style.color = 'var(--cyan)';
+  } else {
+    hint.innerHTML = '💻 Desktop device detected';
+  }
+}
+detectDevice();
+
 // ── metrics ───────────────────────────────────────────────────────────────────
 
 var totalEvents = 0, clickCount = 0, maxScroll = 0;
@@ -381,14 +414,17 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-function paintDot(x, y) {
+function paintDot(x, y, isTouch = false) {
   var rel = canvas.getBoundingClientRect();
   var cx  = (x - rel.left) * (canvas.width  / rel.width);
   var cy  = (y - rel.top)  * (canvas.height / rel.height);
   if (cx < 0 || cy < 0 || cx > canvas.width || cy > canvas.height) return;
-  ctx.fillStyle = 'rgba(88,166,255,0.18)';
+
+  // Different colors for mouse vs touch
+  var color = isTouch ? 'rgba(188,140,255,0.25)' : 'rgba(88,166,255,0.18)';
+  ctx.fillStyle = color;
   ctx.beginPath();
-  ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+  ctx.arc(cx, cy, isTouch ? 10 : 8, 0, Math.PI * 2);
   ctx.fill();
 }
 
@@ -402,8 +438,11 @@ function renderRow(ev) {
   var stream = document.getElementById('stream');
   var row    = document.createElement('div');
   row.className = 'ev-row';
-  var typeClass = ['click','scroll','mousemove','keydown','keyup','visibility','resize'].includes(ev.type)
-    ? ev.type : 'custom';
+
+  var touchTypes = ['touchstart', 'touchmove', 'touchend'];
+  var typeClass = touchTypes.includes(ev.type) ? ev.type :
+                  ['click','scroll','mousemove','keydown','keyup','visibility','resize'].includes(ev.type) ? ev.type : 'custom';
+
   var d = new Date(ev.ts);
   var ts = d.toLocaleTimeString('en', { hour12: false }) + '.' + String(d.getMilliseconds()).padStart(3,'0');
 
@@ -412,6 +451,9 @@ function renderRow(ev) {
   if (ev.type === 'click')     summary = ev.button + ' @ ' + ev.x + ',' + ev.y;
   else if (ev.type === 'scroll')    summary = 'y=' + ev.percentY + '%';
   else if (ev.type === 'mousemove') summary = ev.x + ',' + ev.y;
+  else if (touchTypes.includes(ev.type)) {
+    summary = (ev.touches ? ev.touches + ' touch(es) @ ' : '') + (ev.x || ev.x === 0 ? ev.x + ',' + ev.y : 'end');
+  }
   else if (ev.type === 'keydown' || ev.type === 'keyup') summary = ev.key;
   else if (ev.type === 'visibility') summary = ev.state;
   else if (ev.type === 'resize') summary = ev.width + '×' + ev.height;
@@ -431,14 +473,19 @@ function renderRow(ev) {
   }
 }
 
-// ── subscribe ─────────────────────────────────────────────────────────────────
+// ── subscribe to all events ───────────────────────────────────────────────────
 
 tele.on('*', function(ev) {
   totalEvents++;
   allEvents.push(ev);
+
   if (ev.type === 'click') clickCount++;
   if (ev.type === 'scroll' && typeof ev.percentY === 'number') maxScroll = Math.max(maxScroll, ev.percentY);
-  if (ev.type === 'mousemove') paintDot(ev.x, ev.y);
+
+  // Paint on heatmap for both mouse and touch move events
+  if (ev.type === 'mousemove' && ev.x && ev.y) paintDot(ev.x, ev.y, false);
+  if (ev.type === 'touchmove' && ev.x && ev.y) paintDot(ev.x, ev.y, true);
+
   renderRow(ev);
   updateMetrics();
 });
@@ -457,7 +504,7 @@ document.getElementById('filters').addEventListener('click', function(e) {
   stream.innerHTML = '';
   var filtered = allEvents.filter(function(ev){
     if (activeFilter === 'all') return true;
-    var tc = ['click','scroll','mousemove','keydown','keyup','visibility','resize'].includes(ev.type) ? ev.type : 'custom';
+    var tc = ['click','scroll','mousemove','touchstart','touchmove','touchend','keydown','keyup','visibility','resize'].includes(ev.type) ? ev.type : 'custom';
     return tc === activeFilter;
   }).slice(-200).reverse();
   filtered.forEach(renderRow);
