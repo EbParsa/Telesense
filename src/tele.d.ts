@@ -17,6 +17,8 @@ export interface TeleEvent {
   x?: number;
   y?: number;
   element?: ElementSummary | null;
+  // touch
+  touches?: number;
   // scroll
   scrollX?: number;
   scrollY?: number;
@@ -38,6 +40,9 @@ export interface TeleEvent {
 export type EventType =
   | 'click'
   | 'mousemove'
+  | 'touchstart'
+  | 'touchmove'
+  | 'touchend'
   | 'scroll'
   | 'keydown'
   | 'keyup'
@@ -49,6 +54,9 @@ export type EventType =
 export interface CaptureConfig {
   click?: boolean;
   mousemove?: boolean;
+  touchstart?: boolean;
+  touchmove?: boolean;
+  touchend?: boolean;
   scroll?: boolean;
   keydown?: boolean;
   keyup?: boolean;

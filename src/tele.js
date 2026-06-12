@@ -1,5 +1,5 @@
 /*!
- * Telesense v0.1.0 — Lightweight behavioural telemetry SDK
+ * Telesense — Lightweight behavioural telemetry SDK
  * https://github.com/EbParsa/Telesense
  * MIT License
  */
@@ -13,17 +13,20 @@
   // ─── defaults ────────────────────────────────────────────────────────────────
 
   const DEFAULTS = {
-    endpoint:        '',          // POST URL  e.g. 'https://your-api.com/telemetry'
+    endpoint:        '',          // POST URL e.g. 'https://your-api.com/telemetry'
     supabaseUrl:     '',          // Supabase project URL
     supabaseAnonKey: '',          // Supabase anon key
     flushInterval:   5000,        // ms between auto-flushes
-    maxQueue:        500,         // max events held in memory before forced flush
-    maxStored:       20000,       // max events kept in localStorage fallback
+    maxQueue:        500,         // Max events held in memory before forced flush
+    maxStored:       20000,       // Max events kept in localStorage fallback
     mouseThrottle:   100,         // ms between mousemove samples
-    sessionId:       null,        // supply your own or one is generated
-    capture: {
+    sessionId:       null,        // Supply your own or one is generated
+    capture: {                    // Modify captured events
       click:      true,
       mousemove:  true,
+      touchstart: true,
+      touchmove:  true,
+      touchend:   true,
       scroll:     true,
       keydown:    true,
       keyup:      true,
@@ -31,7 +34,7 @@
       resize:     true,
     },
     onFlush: null,   // (events: TeleEvent[]) => void — custom transport hook
-    onEvent: null,   // (event: TeleEvent) => void  — fired for every captured event
+    onEvent: null,   // (event: TeleEvent) => void — fired for every captured event
   };
 
   // ─── helpers ─────────────────────────────────────────────────────────────────
@@ -78,6 +81,32 @@
     classes: typeof el.className === 'string'
       ? el.className.split(/\s+/).filter(Boolean) : [],
   });
+
+  // Helper function to get touch coordinates
+  const getTouchCoords = (touchEvent) => {
+    if (!touchEvent.touches || touchEvent.touches.length === 0) {
+      return { x: null, y: null };
+    }
+    const touch = touchEvent.touches[0];
+    return {
+      x: touch.clientX,
+      y: touch.clientY,
+      touches: touchEvent.touches.length
+    };
+  };
+
+  // Helper function to get changed touch for touchend
+  const getChangedTouchCoords = (touchEvent) => {
+    if (!touchEvent.changedTouches || touchEvent.changedTouches.length === 0) {
+      return { x: null, y: null };
+    }
+    const touch = touchEvent.changedTouches[0];
+    return {
+      x: touch.clientX,
+      y: touch.clientY,
+      touches: touchEvent.touches?.length || 0
+    };
+  };
 
   // ─── factory ─────────────────────────────────────────────────────────────────
 
@@ -212,6 +241,49 @@
         document.addEventListener('contextmenu', handlers.contextmenu, { passive: true });
       }
 
+      if (cfg.capture.touchstart) {
+        handlers.touchstart = (e) => {
+          const coords = getTouchCoords(e);
+          record('touchstart', {
+            x: coords.x,
+            y: coords.y,
+            touches: coords.touches,
+            element: elSummary(e.target),
+          });
+        };
+        document.addEventListener('touchstart', handlers.touchstart, { passive: true });
+      }
+
+      if (cfg.capture.touchmove) {
+        handlers.touchmove = (e) => {
+          const now = Date.now();
+          if (now - lastMouse < cfg.mouseThrottle) return;
+          lastMouse = now;
+
+          const coords = getTouchCoords(e);
+          record('touchmove', {
+            x: coords.x,
+            y: coords.y,
+            touches: coords.touches,
+            element: elSummary(e.target),
+          });
+        };
+        document.addEventListener('touchmove', handlers.touchmove, { passive: true });
+      }
+
+      if (cfg.capture.touchend) {
+        handlers.touchend = (e) => {
+          const coords = getChangedTouchCoords(e);
+          record('touchend', {
+            x: coords.x,
+            y: coords.y,
+            touches: coords.touches,
+            element: elSummary(e.target),
+          });
+        };
+        document.addEventListener('touchend', handlers.touchend, { passive: true });
+      }
+
       if (cfg.capture.scroll) {
         handlers.scroll = () => {
           const doc  = document.documentElement;
@@ -270,6 +342,9 @@
       clearInterval(_flushTimer);
       if (handlers.mousemove)         document.removeEventListener('mousemove',        handlers.mousemove);
       if (handlers.click)             document.removeEventListener('click',            handlers.click);
+      if (handlers.touchstart)        document.removeEventListener('touchstart',       handlers.touchstart);
+      if (handlers.touchmove)         document.removeEventListener('touchmove',        handlers.touchmove);
+      if (handlers.touchend)          document.removeEventListener('touchend',         handlers.touchend);
       if (handlers.contextmenu)       document.removeEventListener('contextmenu',      handlers.contextmenu);
       if (handlers.scroll)            document.removeEventListener('scroll',           handlers.scroll);
       if (handlers.keydown)           document.removeEventListener('keydown',          handlers.keydown);
