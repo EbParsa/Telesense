@@ -1,561 +1,2362 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"/>
-  <title>Telesense — live demo</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Telesense — Premium Behavioral Telemetry SDK Demo</title>
+  <meta name="description" content="Interactive demo page for Telesense, a lightweight, zero-dependency behavioral telemetry SDK designed by EbParsa and MKH_User." />
+  
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --bg:       #0d1117;
-      --surface:  #161b22;
-      --border:   #30363d;
-      --text:     #e6edf3;
-      --muted:    #8b949e;
-      --accent:   #58a6ff;
-      --green:    #3fb950;
-      --amber:    #d29922;
-      --red:      #f85149;
-      --purple:   #bc8cff;
-      --cyan:     #79c0ff;
-      --radius:   10px;
+      --bg-dark: #060814;
+      --bg-card: rgba(13, 17, 30, 0.7);
+      --bg-code: #05070e;
+      --border-color: rgba(255, 255, 255, 0.07);
+      --border-color-hover: rgba(6, 182, 212, 0.3);
+      
+      --primary: #06b6d4; /* Neon Cyan */
+      --primary-rgb: 6, 182, 212;
+      --secondary: #8b5cf6; /* Electric Violet */
+      --secondary-rgb: 139, 92, 246;
+      --accent: #ec4899; /* Hot Pink */
+      --accent-rgb: 236, 72, 153;
+      
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #475569;
+      
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 8px;
+      
+      --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-fast: all 0.2s ease;
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+
+    /* Reset & Base Styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg); color: var(--text);
-      min-height: 100vh; padding: 0 0 80px;
-      font-size: 15px; line-height: 1.6;
-      touch-action: pan-x pan-y; /* Allow touch scrolling while capturing */
+      font-family: var(--font-sans);
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(6, 182, 212, 0.07) 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.04) 0%, transparent 50%),
+        linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+      background-attachment: fixed;
     }
 
-    /* ── hero ── */
-    .hero {
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(6, 182, 212, 0.15);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(6, 182, 212, 0.35);
+    }
+
+    /* Loading Overlay */
+    .loading-screen {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: var(--bg-dark);
+      z-index: 9999;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+    }
+    .loading-screen.fade-out {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .loader {
+      position: relative;
+      width: 70px;
+      height: 70px;
+      margin-bottom: 20px;
+    }
+    .loader-ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 3px solid transparent;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1.4s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+    }
+    .loader-ring-inner {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      border: 3px solid transparent;
+      border-top-color: var(--secondary);
+      border-radius: 50%;
+      animation: spin 1s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite reverse;
+    }
+    .loader-text {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--text-secondary);
+      font-weight: 700;
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* Header & Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(6, 8, 20, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-color);
+      transition: var(--transition-fast);
+    }
+    .header-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .logo-badge {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--bg-dark);
+      font-weight: 800;
+      font-size: 20px;
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+    }
+    .logo-title {
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(to right, var(--text-primary), var(--text-secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .logo-title span {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    .nav-item {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: var(--transition-fast);
+    }
+    .nav-item:hover {
+      color: var(--primary);
+    }
+    .btn-github-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition-fast);
+    }
+    .btn-github-nav:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    /* Hero Section */
+    .hero-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 5rem 2rem 4rem;
       text-align: center;
-      padding: 64px 24px 48px;
-      border-bottom: 1px solid var(--border);
+      position: relative;
     }
-    .hero h1 {
-      font-size: clamp(28px, 5vw, 48px);
-      font-weight: 700; letter-spacing: -1px;
-      background: linear-gradient(135deg, var(--accent), var(--purple));
-      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-      margin-bottom: 12px;
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 30px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--success);
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
     }
-    .hero p { color: var(--muted); max-width: 520px; margin: 0 auto 28px; font-size: 16px; }
-    .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
-    .badge {
-      font-size: 12px; padding: 4px 12px; border-radius: 20px;
-      border: 1px solid var(--border); color: var(--muted);
-      font-family: ui-monospace, monospace;
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--success);
+      border-radius: 50%;
+      animation: pulse-glow 1.5s infinite;
     }
-    .install-block {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 12px 20px;
-      font-family: ui-monospace, monospace; font-size: 14px;
+    .status-badge.inactive {
+      background: rgba(239, 68, 68, 0.06);
+      border-color: rgba(239, 68, 68, 0.2);
+      color: var(--danger);
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);
     }
-    .install-block code { color: var(--accent); }
-    .copy-btn {
-      background: none; border: 1px solid var(--border); color: var(--muted);
-      border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 12px;
-      transition: all .15s;
-    }
-    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* ── layout ── */
-    .shell { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
-    h2 { font-size: 18px; font-weight: 600; margin: 40px 0 16px; color: var(--text); }
-
-    /* ── cards ── */
-    .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 20px;
-    }
-    .card-title {
-      font-size: 13px; font-weight: 600; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .6px; margin-bottom: 16px;
+    .status-badge.inactive .status-dot {
+      background-color: var(--danger);
+      animation: none;
     }
 
-    /* ── metrics ── */
-    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 32px 0 20px; }
-    @media (max-width: 600px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
-    .metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
-    .metric-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
-    .metric-value { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text); }
+    @keyframes pulse-glow {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
 
-    /* ── heatmap / touch canvas ── */
-    #heatmap-canvas {
-      width: 100%; height: 200px; background: #0b0e14;
-      border-radius: 8px; border: 1px solid var(--border); display: block;
+    .hero-h1 {
+      font-size: clamp(40px, 7vw, 76px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -2.5px;
+      margin-bottom: 1.5rem;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--primary) 0%, #38bdf8 30%, var(--secondary) 70%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+    .hero-lead {
+      font-size: clamp(16px, 2.5vw, 21px);
+      color: var(--text-secondary);
+      max-width: 780px;
+      margin: 0 auto 3rem;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+    .hero-lead strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .hero-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1.25rem;
+      margin-bottom: 3.5rem;
+      flex-wrap: wrap;
+    }
+    
+    /* Code command block */
+    .command-terminal {
+      display: flex;
+      align-items: center;
+      background: rgba(5, 7, 14, 0.85);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1.25rem;
+      max-width: 540px;
+      margin: 0 auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      transition: var(--transition-smooth);
+    }
+    .command-terminal:hover {
+      border-color: var(--border-color-hover);
+      box-shadow: 0 10px 40px rgba(6, 182, 212, 0.08);
+    }
+    .terminal-prefix {
+      color: var(--accent);
+      font-weight: bold;
+      margin-right: 12px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      user-select: none;
+    }
+    .terminal-code {
+      flex-grow: 1;
+      text-align: left;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-primary);
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none;
+    }
+    .terminal-code::-webkit-scrollbar {
+      display: none;
+    }
+    .btn-copy-terminal {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-copy-terminal:hover {
+      color: var(--primary);
+      background: rgba(6, 182, 212, 0.08);
+      border-color: var(--primary);
+    }
+
+    /* Core stats row */
+    .specs-grid {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+      max-width: 1000px;
+      margin: 4rem auto 0;
+      padding-top: 3rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .spec-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      transition: var(--transition-fast);
+    }
+    .spec-item i {
+      color: var(--primary);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+    }
+    .spec-item:hover {
+      color: var(--text-primary);
+      transform: translateY(-1px);
+    }
+
+    /* Main Dashboard Layout */
+    .dashboard-wrapper {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    /* Headline of sections */
+    .section-head {
+      margin: 5rem 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .section-title {
+      font-size: clamp(22px, 3.5vw, 32px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(to right, var(--text-primary), var(--text-secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    .section-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      font-weight: 400;
+    }
+
+    /* Stats Dashboard Row */
+    .counters-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 1024px) {
+      .counters-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 600px) {
+      .counters-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .counter-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition-smooth);
+    }
+    .counter-card:hover {
+      border-color: var(--border-color-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(6, 182, 212, 0.05);
+    }
+    .counter-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      opacity: 0.6;
+    }
+    .counter-card.accent::after {
+      background: linear-gradient(90deg, var(--secondary), var(--accent));
+    }
+    .counter-card.pink::after {
+      background: linear-gradient(90deg, var(--accent), var(--primary));
+    }
+    .counter-card.success::after {
+      background: linear-gradient(90deg, var(--success), var(--primary));
+    }
+
+    .counter-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .counter-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-secondary);
+    }
+    .counter-icon {
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+    }
+    .counter-card.accent .counter-icon { color: var(--secondary); }
+    .counter-card.pink .counter-icon { color: var(--accent); }
+    .counter-card.success .counter-icon { color: var(--success); }
+
+    .counter-val {
+      font-size: 36px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--text-primary);
+      line-height: 1.1;
+      display: flex;
+      align-items: baseline;
+      gap: 2px;
+    }
+    .counter-unit {
+      font-size: 16px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-family: var(--font-sans);
+    }
+    .counter-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Core Sandbox Grid */
+    .dashboard-two-col {
+      display: grid;
+      grid-template-columns: 1.6fr 1.4fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 1024px) {
+      .dashboard-two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition-smooth);
+    }
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Live Feed Card styling */
+    .log-stream-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+    .filter-pills-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+    .pill-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      padding: 5px 12px;
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .pill-btn:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      color: var(--text-primary);
+    }
+    .pill-btn.active {
+      background: rgba(6, 182, 212, 0.12);
+      border-color: var(--primary);
+      color: var(--primary);
+      box-shadow: 0 0 12px rgba(6, 182, 212, 0.15);
+    }
+
+    .log-feed-box {
+      flex-grow: 1;
+      height: 380px;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(5, 7, 14, 0.7);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      height: 100%;
+      text-align: center;
+      gap: 10px;
+      padding: 2rem;
+    }
+    .empty-icon-ring {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px dashed rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      animation: pulse 2s infinite ease-in-out;
+    }
+    .empty-state p {
+      font-size: 13px;
+      max-width: 250px;
+    }
+
+    .event-log-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+      animation: eventSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transition: var(--transition-fast);
+    }
+    .event-log-row:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    @keyframes eventSlideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .row-time {
+      color: var(--text-muted);
+      font-size: 11px;
+      padding-top: 3px;
+      white-space: nowrap;
+    }
+    .row-badge {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      width: 96px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    
+    /* Specific badge styling */
+    .badge-click { background: rgba(6, 182, 212, 0.1); color: var(--primary); border: 1px solid rgba(6, 182, 212, 0.2); }
+    .badge-scroll { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .badge-mousemove { background: rgba(139, 92, 246, 0.1); color: var(--secondary); border: 1px solid rgba(139, 92, 246, 0.2); }
+    .badge-keydown { background: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+    .badge-keyup { background: rgba(245, 158, 11, 0.05); color: var(--warning); opacity: 0.8; border: 1px solid rgba(245, 158, 11, 0.1); }
+    .badge-touchstart { background: rgba(236, 72, 153, 0.1); color: var(--accent); border: 1px solid rgba(236, 72, 153, 0.2); }
+    .badge-touchmove { background: rgba(236, 72, 153, 0.06); color: var(--accent); opacity: 0.9; border: 1px solid rgba(236, 72, 153, 0.1); }
+    .badge-touchend { background: rgba(236, 72, 153, 0.12); color: var(--accent); border: 1px solid rgba(236, 72, 153, 0.25); }
+    .badge-resize { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .badge-visibility { background: rgba(249, 115, 22, 0.1); color: var(--orange); border: 1px solid rgba(249, 115, 22, 0.2); }
+    .badge-custom { background: rgba(236, 72, 153, 0.08); color: var(--accent); border: 1px solid rgba(236, 72, 153, 0.2); }
+
+    .row-details {
+      color: var(--text-secondary);
+      overflow-x: auto;
+      white-space: nowrap;
+      flex-grow: 1;
+      scrollbar-width: none;
+    }
+    .row-details::-webkit-scrollbar {
+      display: none;
+    }
+    .row-details span.key { color: var(--text-muted); margin-right: 2px; }
+    .row-details span.val { color: var(--text-primary); margin-right: 8px; }
+    .row-details span.masked { color: var(--warning); font-weight: 600; }
+
+    /* Canvas Sandbox Card */
+    .sandbox-card {
+      height: 480px;
+    }
+    .sandbox-container {
+      position: relative;
+      flex-grow: 1;
+      background: radial-gradient(circle, rgba(16, 22, 37, 0.8) 0%, rgba(8, 10, 20, 0.95) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       touch-action: none;
     }
-
-    /* ── event stream ── */
-    .stream {
-      height: 300px; overflow-y: auto; font-family: ui-monospace, monospace;
-      font-size: 12px; line-height: 1.8;
-      background: #0b0e14; border-radius: 8px; border: 1px solid var(--border);
-      padding: 12px;
+    .sandbox-grid {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 20px 20px;
+      pointer-events: none;
     }
-    .ev-row { display: flex; gap: 10px; border-bottom: 1px solid #1e2530; padding: 4px 0; }
-    .ev-ts   { color: var(--muted); flex-shrink: 0; }
-    .ev-type { font-weight: 600; flex-shrink: 0; min-width: 90px; }
-    .ev-type.click      { color: var(--accent); }
-    .ev-type.scroll     { color: var(--green); }
-    .ev-type.mousemove  { color: #5c6bc0; }
-    .ev-type.touchstart { color: var(--cyan); }
-    .ev-type.touchmove  { color: var(--cyan); }
-    .ev-type.touchend   { color: var(--cyan); }
-    .ev-type.keydown    { color: var(--amber); }
-    .ev-type.keyup      { color: var(--amber); }
-    .ev-type.visibility { color: var(--purple); }
-    .ev-type.resize     { color: var(--red); }
-    .ev-type.custom     { color: #26c6da; }
-    .ev-data { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-    /* ── code blocks ── */
-    .code-block {
-      background: #0b0e14; border: 1px solid var(--border);
-      border-radius: 8px; padding: 16px; margin: 8px 0;
-      font-family: ui-monospace, monospace; font-size: 13px; line-height: 1.8;
-      overflow-x: auto;
+    .sandbox-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 1;
     }
-    .kw   { color: var(--purple); }
-    .str  { color: #a5d6ff; }
-    .fn   { color: var(--amber); }
-    .cmt  { color: #485060; font-style: italic; }
-    .num  { color: var(--green); }
-
-    /* ── interactive playground ── */
-    .playground { display: flex; flex-direction: column; gap: 12px; }
-    .pg-row { display: flex; gap: 8px; flex-wrap: wrap; }
-    .pg-btn {
-      padding: 8px 18px; border-radius: 8px; border: 1px solid var(--border);
-      background: var(--surface); color: var(--text); cursor: pointer;
-      font-size: 13px; font-family: inherit; transition: all .15s;
+    .sandbox-intro {
+      position: absolute;
+      text-align: center;
+      z-index: 2;
+      color: var(--text-secondary);
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      max-width: 280px;
     }
-    .pg-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .pg-btn.danger:hover { border-color: var(--red); color: var(--red); }
-    .pg-btn.success { background: #0f2a14; border-color: var(--green); color: var(--green); }
-    .pg-input {
-      flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
-      background: #0b0e14; color: var(--text); font-size: 13px; font-family: inherit;
-      min-width: 180px;
+    .sandbox-intro i {
+      font-size: 32px;
+      color: var(--primary);
+      filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.4));
+      margin-bottom: 12px;
+      display: inline-block;
+      animation: float 3s ease-in-out infinite;
     }
-    .pg-input:focus { outline: none; border-color: var(--accent); }
-    .output-box {
-      background: #0b0e14; border: 1px solid var(--border); border-radius: 8px;
-      padding: 12px; font-family: ui-monospace, monospace; font-size: 12px;
-      color: var(--green); min-height: 48px; line-height: 1.8;
-      white-space: pre-wrap; word-break: break-all;
-    }
-
-    /* ── filter bar ── */
-    .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-    .filter-pill {
-      padding: 4px 12px; border-radius: 20px; font-size: 12px;
-      border: 1px solid var(--border); color: var(--muted); cursor: pointer;
-      transition: all .15s;
-    }
-    .filter-pill.active { border-color: var(--accent); color: var(--accent); background: #0d2a4a; }
-
-    /* ── device hint ── */
-    .device-hint {
-      background: rgba(88,166,255,0.1); border-left: 3px solid var(--accent);
-      padding: 12px; border-radius: 8px; margin-bottom: 20px;
+    .sandbox-intro p {
       font-size: 13px;
+      line-height: 1.5;
+    }
+    .sandbox-footer-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+    }
+    .legend-box {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+    .legend-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .legend-glow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .legend-glow-dot.cyan { background-color: var(--primary); box-shadow: 0 0 8px var(--primary); }
+    .legend-glow-dot.violet { background-color: var(--secondary); box-shadow: 0 0 8px var(--secondary); }
+    
+    .panel-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .panel-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.18);
+      color: var(--text-primary);
+    }
+    .panel-btn.danger-btn:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.08);
     }
 
-    /* ── footer ── */
-    footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 60px; }
-    footer a { color: var(--accent); text-decoration: none; }
+    /* Sandbox Forms & API Console Row */
+    .sandbox-lower-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1.8fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    @media (max-width: 1024px) {
+      .sandbox-lower-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Interactive Elements & Masking Demo */
+    .form-demo-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .demo-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .demo-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-label-right {
+      font-size: 9px;
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+    .badge-label-right.green {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+      border-color: rgba(16, 185, 129, 0.2);
+    }
+    .demo-input {
+      background: rgba(10, 14, 26, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      transition: var(--transition-fast);
+    }
+    .demo-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 12px rgba(6, 182, 212, 0.15);
+    }
+
+    .interactive-grid-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .click-target-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      transition: var(--transition-fast);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .click-target-btn i {
+      font-size: 16px;
+      color: var(--primary);
+    }
+    .click-target-btn:hover {
+      background: rgba(6, 182, 212, 0.06);
+      border-color: rgba(6, 182, 212, 0.25);
+      transform: translateY(-1px);
+    }
+    .click-target-btn.pink-btn i { color: var(--accent); }
+    .click-target-btn.pink-btn:hover {
+      background: rgba(236, 72, 153, 0.06);
+      border-color: rgba(236, 72, 153, 0.25);
+    }
+    .click-target-btn.violet-btn i { color: var(--secondary); }
+    .click-target-btn.violet-btn:hover {
+      background: rgba(139, 92, 246, 0.06);
+      border-color: rgba(139, 92, 246, 0.25);
+    }
+
+    /* API Terminal Card styling */
+    .terminal-container {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(4, 5, 10, 0.9);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      flex-grow: 1;
+      height: 160px;
+    }
+    .terminal-header {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .terminal-dot.red { background-color: var(--danger); }
+    .terminal-dot.yellow { background-color: var(--warning); }
+    .terminal-dot.green { background-color: var(--success); }
+    .terminal-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+      letter-spacing: 0.5px;
+    }
+    .terminal-output {
+      padding: 14px 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--success);
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.6;
+      flex-grow: 1;
+    }
+
+    .api-inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+    @media (max-width: 600px) {
+      .api-inputs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .api-buttons-flow {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .api-btn {
+      background: rgba(6, 182, 212, 0.06);
+      border: 1px solid rgba(6, 182, 212, 0.25);
+      color: var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .api-btn:hover {
+      background: rgba(6, 182, 212, 0.15);
+      border-color: var(--primary);
+      box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
+    }
+    .api-btn.secondary {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+    }
+    .api-btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.18);
+      color: var(--text-primary);
+      box-shadow: none;
+    }
+    .api-btn.danger {
+      background: rgba(239, 68, 68, 0.05);
+      border-color: rgba(239, 68, 68, 0.2);
+      color: var(--danger);
+    }
+    .api-btn.danger:hover {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: var(--danger);
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.15);
+    }
+
+    /* Comparison Table Styling */
+    .compare-section {
+      max-width: 1300px;
+      margin: 0 auto 4rem;
+      padding: 0 2rem;
+    }
+    .table-container {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow-x: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+    .compare-table th, .compare-table td {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .compare-table th {
+      font-weight: 700;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.01);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .compare-table tr:last-child td {
+      border-bottom: none;
+    }
+    .compare-table tr:hover td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+    .highlight-col {
+      color: var(--primary);
+      font-weight: 600;
+      background: rgba(6, 182, 212, 0.02);
+    }
+    .compare-table td.highlight-col {
+      border-left: 1px solid rgba(6, 182, 212, 0.05);
+      border-right: 1px solid rgba(6, 182, 212, 0.05);
+    }
+    .bold-cell {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .icon-success {
+      color: var(--success);
+      font-weight: bold;
+    }
+    .icon-fail {
+      color: var(--text-muted);
+    }
+
+    /* Documentation Section */
+    .docs-section {
+      max-width: 1300px;
+      margin: 0 auto 5rem;
+      padding: 0 2rem;
+    }
+    .docs-tab-header {
+      display: flex;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .docs-tab-header::-webkit-scrollbar {
+      display: none;
+    }
+    .tab-trigger {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      transition: var(--transition-fast);
+      white-space: nowrap;
+    }
+    .tab-trigger:hover {
+      color: var(--text-primary);
+    }
+    .tab-trigger.active {
+      color: var(--primary);
+    }
+    .tab-trigger.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--primary);
+      box-shadow: 0 0 10px var(--primary);
+    }
+    
+    .tab-content {
+      display: none;
+      animation: tabFadeIn 0.4s ease;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .code-editor-mock {
+      background: var(--bg-code);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+    }
+    .code-editor-header {
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .code-editor-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .code-editor-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .code-editor-title {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .code-editor-pre {
+      padding: 24px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.8;
+      color: #e2e8f0;
+    }
+
+    /* Code Syntax Highlighting Colors */
+    .c-comment { color: #5c7080; font-style: italic; }
+    .c-keyword { color: #f472b6; }
+    .c-string { color: #34d399; }
+    .c-number { color: #fbbf24; }
+    .c-function { color: #60a5fa; }
+    .c-tag { color: #f87171; }
+    .c-attr { color: #fb7185; }
+
+    /* Custom Toast Container */
+    .toasts-box {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 1000;
+      max-width: 320px;
+    }
+    .custom-toast {
+      background: rgba(13, 17, 30, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      padding: 12px 18px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards, toastOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) 3s forwards;
+    }
+    .custom-toast.success { border-left-color: var(--success); }
+    .custom-toast.warning { border-left-color: var(--warning); }
+    .custom-toast.danger { border-left-color: var(--danger); }
+    
+    @keyframes toastIn {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes toastOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(120%); opacity: 0; }
+    }
+
+    /* Footer styling */
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(4, 5, 10, 0.85);
+      padding: 4rem 2rem 3rem;
+      margin-top: 6rem;
+    }
+    .footer-wrap {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .footer-upper {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .footer-desc-block {
+      max-width: 400px;
+    }
+    .footer-desc-block p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+    .footer-links-block {
+      display: flex;
+      gap: 4rem;
+    }
+    .footer-link-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-col-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+    }
+    .footer-link-col a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      transition: var(--transition-fast);
+    }
+    .footer-link-col a:hover {
+      color: var(--primary);
+    }
+    .footer-lower {
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+      padding-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .footer-lower a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+    .footer-lower a:hover {
+      color: var(--primary);
+    }
+
+    /* SVGs helper */
+    .svg-icon {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .svg-icon-large {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+      display: inline-block;
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body>
 
-<div class="hero">
-  <h1>Telesense</h1>
-  <p>Zero-dependency behavioural telemetry SDK. One script tag, full event capture, clean JS API.</p>
-  <div class="badges">
-    <span class="badge">less than 20 kB</span>
-    <span class="badge">zero dependencies</span>
-    <span class="badge">UMD + ESM</span>
-    <span class="badge">TypeScript ready</span>
-    <span class="badge">Touch support</span>
-    <span class="badge">MIT</span>
-  </div>
-  <div class="install-block">
-    <code id="install-text">&lt;script src="https://cdn.jsdelivr.net/npm/telesense/dist/tele.umd.min.js"&gt;&lt;/script&gt;</code>
-    <button class="copy-btn" onclick="copyInstall()">copy</button>
-  </div>
-</div>
-
-<div class="shell">
-
-  <!-- live metrics -->
-  <div class="metrics">
-    <div class="metric"><div class="metric-label">Events captured</div><div class="metric-value" id="m-total">0</div></div>
-    <div class="metric"><div class="metric-label">Clicks/Taps</div>        <div class="metric-value" id="m-clicks">0</div></div>
-    <div class="metric"><div class="metric-label">Scroll depth</div>  <div class="metric-value" id="m-scroll">0%</div></div>
-    <div class="metric"><div class="metric-label">Queue size</div>    <div class="metric-value" id="m-queue">0</div></div>
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loading-screen">
+    <div class="loader">
+      <div class="loader-ring"></div>
+      <div class="loader-ring-inner"></div>
+    </div>
+    <div class="loader-text">Loading Telesense</div>
   </div>
 
-  <div class="device-hint" id="device-hint">
-    📱 <span id="device-type">Detecting device...</span> — Touch events are automatically captured.
-  </div>
-
-  <div class="two-col">
-
-    <!-- left: stream + filter -->
-    <div class="card">
-      <div class="card-title">Live event stream</div>
-      <div class="filter-bar" id="filters">
-        <div class="filter-pill active" data-type="all">all</div>
-        <div class="filter-pill" data-type="click">click/tap</div>
-        <div class="filter-pill" data-type="touchstart">touchstart</div>
-        <div class="filter-pill" data-type="touchmove">touchmove</div>
-        <div class="filter-pill" data-type="touchend">touchend</div>
-        <div class="filter-pill" data-type="scroll">scroll</div>
-        <div class="filter-pill" data-type="mousemove">mousemove</div>
-        <div class="filter-pill" data-type="custom">custom</div>
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <a href="#" class="logo-link">
+        <div class="logo-badge">T</div>
+        <div class="logo-title">Tele<span>sense</span></div>
+      </a>
+      <div class="nav-menu">
+        <a href="#dashboard" class="nav-item">Dashboard</a>
+        <a href="#playground" class="nav-item">Playground</a>
+        <a href="#docs" class="nav-item">Documentation</a>
+        <a href="https://github.com/EbParsa/Telesense" target="_blank" class="btn-github-nav">
+          <svg class="svg-icon" viewBox="0 0 16 16">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+          </svg>
+          GitHub
+        </a>
       </div>
-      <div class="stream" id="stream"></div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="hero-container">
+    <div class="status-badge" id="status-badge">
+      <div class="status-dot"></div>
+      <span id="status-badge-text">Telesense Active</span>
+    </div>
+    
+    <h1 class="hero-h1">
+      Behavioral Telemetry<br />
+      <span class="gradient-text">Beautifully Captured.</span>
+    </h1>
+    
+    <p class="hero-lead">
+      A lightweight, zero-dependency behavioral telemetry SDK designed by <strong>EbParsa</strong> and <strong>MKH_User</strong>. 
+      Capture clicks, scrolls, keypresses, and heatmap data with a drop-in script tag or clean JS API in less than <strong>20 kB</strong>.
+    </p>
+    
+    <div class="hero-buttons">
+      <a href="#dashboard" class="btn-primary">
+        Launch Live Demo
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+      <a href="#docs" class="btn-github-nav" style="padding: 0.85rem 2rem; border-radius: var(--radius-md); font-size: 15px;">
+        View Setup Guide
+      </a>
     </div>
 
-    <!-- right: heatmap/touch -->
-    <div class="card">
-      <div class="card-title">Interaction heatmap</div>
-      <canvas id="heatmap-canvas"></canvas>
-      <p style="font-size:12px;color:var(--muted);margin-top:10px">
-        🖱️ Mouse moves / 👆 Touch drags — dots accumulate in real time.
-        <button class="pg-btn" style="margin-left:8px;padding:4px 12px;font-size:11px" onclick="clearHeatmap()">clear</button>
-      </p>
+    <!-- Terminal Command Codeblock -->
+    <div class="command-terminal">
+      <span class="terminal-prefix">$</span>
+      <div class="terminal-code" id="terminal-install-cmd">npm install telesense</div>
+      <button class="btn-copy-terminal" onclick="copyInstallCmd()">
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span id="copy-btn-text">Copy</span>
+      </button>
     </div>
 
-  </div>
-
-  <!-- playground -->
-  <h2>API playground</h2>
-  <div class="card">
-    <div class="card-title">Try the API in your browser console — or use the buttons below</div>
-    <div class="playground">
-
-      <div class="pg-row">
-        <input class="pg-input" id="custom-type"  placeholder="event type e.g. pageview" value="pageview"/>
-        <input class="pg-input" id="custom-data"  placeholder='extra data e.g. {"url":"/home"}' value='{"url":"/home"}'/>
-        <button class="pg-btn" onclick="fireCustom()">tele.track()</button>
+    <!-- Feature specs row -->
+    <div class="specs-grid">
+      <div class="spec-item">
+        <i>✓</i> <b>9.7 kB</b> Minified Size
       </div>
-
-      <div class="pg-row">
-        <button class="pg-btn" onclick="showQueue()">tele.getQueue()</button>
-        <button class="pg-btn" onclick="doFlush()">tele.flush()</button>
-        <button class="pg-btn danger" onclick="doReset()">tele.reset()</button>
-        <button class="pg-btn" onclick="showSession()">tele.sessionId</button>
+      <div class="spec-item">
+        <i>✓</i> <b>Zero</b> Dependencies
       </div>
-
-      <div class="output-box" id="pg-output">// output appears here</div>
+      <div class="spec-item">
+        <i>✓</i> <b>UMD + ESM</b> Native Bundles
+      </div>
+      <div class="spec-item">
+        <i>✓</i> <b>Supabase</b> Ready
+      </div>
+      <div class="spec-item">
+        <i>✓</i> <b>TypeScript</b> Types Shipped
+      </div>
     </div>
   </div>
 
-  <!-- code examples -->
-  <h2>Integration examples</h2>
-  <div class="two-col">
+  <!-- Dashboard Section -->
+  <div class="dashboard-wrapper" id="dashboard">
+    <div class="section-head">
+      <div>
+        <h2 class="section-title">Telemetry Dashboard</h2>
+        <p class="section-subtitle">Interact with this page to watch telemetry capture events in real-time.</p>
+      </div>
+    </div>
 
-    <div class="card">
-      <div class="card-title">Drop-in (script tag)</div>
-      <div class="code-block">
-<span class="cmt">&lt;!-- 1. Configure (optional) --&gt;</span>
-<span class="kw">&lt;script&gt;</span>
-  <span class="fn">window</span>.TELE_CONFIG = {
-    endpoint: <span class="str">'/telemetry'</span>,
-    flushInterval: <span class="num">5000</span>
+    <!-- Counters -->
+    <div class="counters-grid">
+      <div class="counter-card">
+        <div class="counter-meta">
+          <span class="counter-label">Events Captured</span>
+          <span class="counter-icon">
+            <svg class="svg-icon-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+            </svg>
+          </span>
+        </div>
+        <div class="counter-val" id="cnt-total">0</div>
+        <div class="counter-desc">Total raw telemetry records</div>
+      </div>
+
+      <div class="counter-card accent">
+        <div class="counter-meta">
+          <span class="counter-label">Clicks & Taps</span>
+          <span class="counter-icon">
+            <svg class="svg-icon-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="6"></circle>
+              <circle cx="12" cy="12" r="2"></circle>
+            </svg>
+          </span>
+        </div>
+        <div class="counter-val" id="cnt-clicks">0</div>
+        <div class="counter-desc">Mouse clicks & touchscreen taps</div>
+      </div>
+
+      <div class="counter-card pink">
+        <div class="counter-meta">
+          <span class="counter-label">Max Scroll Depth</span>
+          <span class="counter-icon">
+            <svg class="svg-icon-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="8 17 12 21 16 17"></polyline>
+              <polyline points="8 7 12 3 16 7"></polyline>
+              <line x1="12" y1="3" x2="12" y2="21"></line>
+            </svg>
+          </span>
+        </div>
+        <div class="counter-val" id="cnt-scroll">0<span class="counter-unit">%</span></div>
+        <div class="counter-desc">Percentage of page scrolled</div>
+      </div>
+
+      <div class="counter-card success">
+        <div class="counter-meta">
+          <span class="counter-label">Local Queue Size</span>
+          <span class="counter-icon">
+            <svg class="svg-icon-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="9" y1="9" x2="15" y2="9"></line>
+              <line x1="9" y1="13" x2="15" y2="13"></line>
+              <line x1="9" y1="17" x2="11" y2="17"></line>
+            </svg>
+          </span>
+        </div>
+        <div class="counter-val" id="cnt-queue">0</div>
+        <div class="counter-desc">Events stored locally before flush</div>
+      </div>
+    </div>
+
+    <!-- Live Logger & Heatmap Grid -->
+    <div class="dashboard-two-col">
+      <!-- Left Panel: Event Logger -->
+      <div class="glass-card logger-panel">
+        <div class="panel-header">
+          <div>
+            <h3 class="panel-title">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary);">
+                <line x1="4" y1="9" x2="20" y2="9"></line>
+                <line x1="4" y1="15" x2="20" y2="15"></line>
+                <line x1="10" y1="3" x2="8" y2="21"></line>
+                <line x1="16" y1="3" x2="14" y2="21"></line>
+              </svg>
+              Live Event Feed
+            </h3>
+            <span class="panel-subtitle">Real-time log of captured user actions</span>
+          </div>
+          <span class="panel-btn" style="padding: 2px 8px; font-size: 10px; cursor: default;">
+            LATENCY: &lt;10ms
+          </span>
+        </div>
+
+        <div class="filter-pills-row" id="feed-filters">
+          <button class="pill-btn active" data-filter="all">ALL</button>
+          <button class="pill-btn" data-filter="click">CLICKS</button>
+          <button class="pill-btn" data-filter="scroll">SCROLL</button>
+          <button class="pill-btn" data-filter="mousemove">MOUSE</button>
+          <button class="pill-btn" data-filter="keydown">KEYPRESS</button>
+          <button class="pill-btn" data-filter="touch">TOUCH</button>
+          <button class="pill-btn" data-filter="custom">CUSTOM</button>
+        </div>
+
+        <div class="log-feed-box" id="log-feed">
+          <div class="empty-state" id="log-empty-state">
+            <div class="empty-icon-ring">
+              <svg class="svg-icon-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <p>Move your mouse, click anywhere, scroll the page, or type in the forms to populate this feed.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Heatmap sandbox -->
+      <div class="glass-card sandbox-card">
+        <div class="panel-header">
+          <div>
+            <h3 class="panel-title">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--secondary);">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+              </svg>
+              Interaction Heatmap Sandbox
+            </h3>
+            <span class="panel-subtitle">Hover, drag, and click inside to generate heat spots</span>
+          </div>
+        </div>
+
+        <div class="sandbox-container" id="sandbox-element">
+          <div class="sandbox-grid"></div>
+          <canvas class="sandbox-canvas" id="sandbox-canvas"></canvas>
+          <div class="sandbox-intro" id="sandbox-intro">
+            <svg class="svg-icon-large" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" style="width:40px; height:40px;">
+              <path d="M15 18H9.5a5.5 5.5 0 0 1-5.5-5.5v0A5.5 5.5 0 0 1 9.5 7H15"></path>
+              <path d="M15 12h.01"></path>
+              <path d="M19 12h.01"></path>
+              <path d="M10 12h.01"></path>
+            </svg>
+            <p style="margin-top: 10px; font-weight: 600;">Hover & Draw Here</p>
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Mouse moves draw blue glows, touches draw pink glows</p>
+          </div>
+        </div>
+
+        <div class="sandbox-footer-controls">
+          <div class="legend-box">
+            <div class="legend-indicator">
+              <span class="legend-glow-dot cyan"></span>
+              <span>Mouse moves</span>
+            </div>
+            <div class="legend-indicator">
+              <span class="legend-glow-dot violet"></span>
+              <span>Touchmove</span>
+            </div>
+          </div>
+          <button class="panel-btn danger-btn" onclick="clearHeatmapCanvas()">
+            Clear Heatmap
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Playground & Masking Section -->
+    <div class="section-head" id="playground">
+      <div>
+        <h2 class="section-title">Developer Playground</h2>
+        <p class="section-subtitle">Experiment with PII data masking and trigger the JavaScript APIs directly.</p>
+      </div>
+    </div>
+
+    <div class="sandbox-lower-grid">
+      <!-- Left: Interactive Form & Masking -->
+      <div class="glass-card">
+        <div class="panel-header">
+          <div>
+            <h3 class="panel-title">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--warning);">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              PII Masking & Triggers
+            </h3>
+            <span class="panel-subtitle">Telesense auto-masks sensitive credentials</span>
+          </div>
+        </div>
+
+        <div class="form-demo-container">
+          <div class="demo-input-group">
+            <label class="demo-label">
+              Standard Input
+              <span class="badge-label-right green">Captured Normally</span>
+            </label>
+            <input type="text" class="demo-input" placeholder="Type name (e.g. John Doe)" id="input-std" />
+          </div>
+
+          <div class="demo-input-group">
+            <label class="demo-label">
+              Password Input
+              <span class="badge-label-right">Auto-Masked</span>
+            </label>
+            <input type="password" class="demo-input" placeholder="••••••••••••" id="input-pwd" />
+          </div>
+
+          <div class="demo-input-group">
+            <label class="demo-label">
+              Credit Card / Sensitive Input
+              <span class="badge-label-right">Auto-Masked</span>
+            </label>
+            <input type="text" class="demo-input" name="cardnumber" placeholder="4111 2222 3333 4444" id="input-card" />
+          </div>
+
+          <div class="demo-input-group">
+            <label class="demo-label">Click Targets</label>
+            <div class="interactive-grid-buttons">
+              <button class="click-target-btn" id="btn-demo-cyan">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Primary
+              </button>
+              <button class="click-target-btn violet-btn" id="btn-demo-violet">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                </svg>
+                Secondary
+              </button>
+              <button class="click-target-btn pink-btn" id="btn-demo-pink">
+                <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Secure
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: API Call Playground -->
+      <div class="glass-card">
+        <div class="panel-header">
+          <div>
+            <h3 class="panel-title">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary);">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+              JavaScript API Console
+            </h3>
+            <span class="panel-subtitle">Invoke package methods directly on the running instance</span>
+          </div>
+        </div>
+
+        <div class="api-playground">
+          <div class="api-inputs-grid">
+            <div class="demo-input-group">
+              <label class="demo-label">Custom Event Name</label>
+              <input type="text" class="demo-input" id="api-evt-name" value="user_signup" style="font-family: var(--font-mono); font-size: 13px;" />
+            </div>
+            <div class="demo-input-group">
+              <label class="demo-label">Payload (JSON)</label>
+              <input type="text" class="demo-input" id="api-evt-data" value='{"plan": "enterprise", "source": "web"}' style="font-family: var(--font-mono); font-size: 13px;" />
+            </div>
+          </div>
+
+          <div class="api-buttons-flow">
+            <button class="api-btn" onclick="executeTrack()">tele.track()</button>
+            <button class="api-btn secondary" onclick="executeGetQueue()">tele.getQueue()</button>
+            <button class="api-btn secondary" onclick="executeFlush()">tele.flush()</button>
+            <button class="api-btn secondary" onclick="executeSessionId()">tele.sessionId</button>
+            <button class="api-btn danger" onclick="executeReset()">tele.reset()</button>
+          </div>
+
+          <!-- Switch to toggle tracking (Start / Stop) -->
+          <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:12px; border-radius:var(--radius-sm); border:1px solid rgba(255,255,255,0.04);">
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <span style="font-size:12px; font-weight:700;">TRACKING LISTENERS</span>
+              <span style="font-size:11px; color:var(--text-secondary);">Toggle active DOM telemetry capture listeners</span>
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button class="panel-btn" id="btn-toggle-listen" onclick="toggleTrackingListeners()" style="border-color:var(--primary); color:var(--primary);">
+                ACTIVE
+              </button>
+            </div>
+          </div>
+
+          <div class="terminal-container">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">CONSOLE OUTPUT</div>
+            </div>
+            <div class="terminal-output" id="terminal-out">// Call any API button above to view return logs</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Comparison Matrix -->
+    <div class="section-head">
+      <div>
+        <h2 class="section-title">The Lightweight Difference</h2>
+        <p class="section-subtitle">How Telesense stacks up against legacy analytics and session recorders.</p>
+      </div>
+    </div>
+    
+    <div class="compare-section">
+      <div class="table-container">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th class="highlight-col">Telesense</th>
+              <th>Hotjar</th>
+              <th>Mixpanel</th>
+              <th>Heap</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="bold-cell">Bundle Footprint</td>
+              <td class="highlight-col bold-cell">&lt; 10 kB (minified)</td>
+              <td>~60 kB</td>
+              <td>~80 kB</td>
+              <td>~120 kB</td>
+            </tr>
+            <tr>
+              <td class="bold-cell">Self-Host Option</td>
+              <td class="highlight-col icon-success">✓ Yes</td>
+              <td class="icon-fail">✗ No</td>
+              <td class="icon-fail">✗ No</td>
+              <td class="icon-fail">✗ No</td>
+            </tr>
+            <tr>
+              <td class="bold-cell">Zero Dependencies</td>
+              <td class="highlight-col icon-success">✓ Yes</td>
+              <td class="icon-fail">✗ No</td>
+              <td class="icon-fail">✗ No</td>
+              <td class="icon-fail">✗ No</td>
+            </tr>
+            <tr>
+              <td class="bold-cell">Custom Transport Hooks</td>
+              <td class="highlight-col icon-success">✓ Yes</td>
+              <td class="icon-fail">✗ No</td>
+              <td class="icon-fail">✗ No</td>
+              <td class="icon-fail">✗ No</td>
+            </tr>
+            <tr>
+              <td class="bold-cell">TypeScript Ready</td>
+              <td class="highlight-col icon-success">✓ Yes</td>
+              <td class="icon-fail">✗ No</td>
+              <td>Partial</td>
+              <td>Partial</td>
+            </tr>
+            <tr>
+              <td class="bold-cell">Open Source License</td>
+              <td class="highlight-col icon-success">✓ MIT</td>
+              <td class="icon-fail">✗ Closed</td>
+              <td class="icon-fail">✗ Closed</td>
+              <td class="icon-fail">✗ Closed</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Documentation & Tabs Section -->
+    <div class="section-head" id="docs">
+      <div>
+        <h2 class="section-title">Integration Guide</h2>
+        <p class="section-subtitle">Learn how to drop in Telesense and customise your data streams.</p>
+      </div>
+    </div>
+
+    <div class="docs-section">
+      <div class="docs-tab-header">
+        <button class="tab-trigger active" onclick="switchTab(event, 'tab-script')">Script Tag (Drop-in)</button>
+        <button class="tab-trigger" onclick="switchTab(event, 'tab-npm')">NPM & Bundler</button>
+        <button class="tab-trigger" onclick="switchTab(event, 'tab-custom')">Custom Transports</button>
+        <button class="tab-trigger" onclick="switchTab(event, 'tab-supabase')">Supabase Sync</button>
+      </div>
+
+      <!-- Tab: Script Tag -->
+      <div class="tab-content active" id="tab-script">
+        <div class="code-editor-mock">
+          <div class="code-editor-header">
+            <div class="code-editor-dots">
+              <div class="code-editor-dot"></div>
+              <div class="code-editor-dot"></div>
+              <div class="code-editor-dot"></div>
+            </div>
+            <div class="code-editor-title">index.html</div>
+          </div>
+          <pre class="code-editor-pre"><code><span class="c-comment">&lt;!-- 1. Configure the script options before loading --&gt;</span>
+<span class="c-tag">&lt;script&gt;</span>
+  <span class="c-keyword">window</span>.TELE_CONFIG = {
+    <span class="c-attr">endpoint</span>: <span class="c-string">'/telemetry'</span>,   <span class="c-comment">// Send queue logs to your custom server endpoint</span>
+    <span class="c-attr">flushInterval</span>: <span class="c-number">5000</span>        <span class="c-comment">// Flush queue automatically every 5 seconds</span>
   };
-<span class="kw">&lt;/script&gt;</span>
+<span class="c-tag">&lt;/script&gt;</span>
 
-<span class="cmt">&lt;!-- 2. Load SDK --&gt;</span>
-<span class="kw">&lt;script</span> <span class="fn">src</span>=<span class="str">"tele.umd.min.js"</span><span class="kw">&gt;&lt;/script&gt;</span>
+<span class="c-comment">&lt;!-- 2. Load the lightweight bundle --&gt;</span>
+<span class="c-tag">&lt;script</span> <span class="c-attr">src</span>=<span class="c-string">"https://cdn.jsdelivr.net/npm/telesense/dist/tele.umd.min.js"</span><span class="c-tag">&gt;&lt;/script&gt;</span>
 
-<span class="cmt">&lt;!-- 3. tele is globally available --&gt;</span>
-<span class="kw">&lt;script&gt;</span>
-  tele.<span class="fn">on</span>(<span class="str">'click'</span>, ev =&gt; {
-    console.<span class="fn">log</span>(<span class="str">'clicked'</span>, ev.x, ev.y);
+<span class="c-comment">&lt;!-- 3. SDK automatically hooks up DOM listeners and is ready to use --&gt;</span>
+<span class="c-tag">&lt;script&gt;</span>
+  <span class="c-keyword">tele</span>.<span class="c-function">on</span>(<span class="c-string">'click'</span>, <span class="c-function">event</span> =&gt; {
+    <span class="c-keyword">console</span>.<span class="c-function">log</span>(<span class="c-string">'User clicked:'</span>, <span class="c-function">event</span>.x, <span class="c-function">event</span>.y);
   });
-<span class="kw">&lt;/script&gt;</span>
+<span class="c-tag">&lt;/script&gt;</span></code></pre>
+        </div>
       </div>
-    </div>
 
-    <div class="card">
-      <div class="card-title">ES module / bundler</div>
-      <div class="code-block">
-<span class="kw">import</span> tele <span class="kw">from</span> <span class="str">'tele-js'</span>;
+      <!-- Tab: NPM -->
+      <div class="tab-content" id="tab-npm">
+        <div class="code-editor-mock">
+          <div class="code-editor-header">
+            <div class="code-editor-dots">
+              <div class="code-editor-dot"></div>
+              <div class="code-editor-dot"></div>
+              <div class="code-editor-dot"></div>
+            </div>
+            <div class="code-editor-title">app.ts</div>
+          </div>
+          <pre class="code-editor-pre"><code><span class="c-comment">// Install via: npm install telesense</span>
+<span class="c-keyword">import</span> tele <span class="c-keyword">from</span> <span class="c-string">'telesense'</span>;
 
-tele.<span class="fn">config</span>({ endpoint: <span class="str">'/telemetry'</span> });
-
-<span class="cmt">// Subscribe to events</span>
-tele.<span class="fn">on</span>(<span class="str">'*'</span>, ev =&gt; analytics.<span class="fn">push</span>(ev));
-
-<span class="cmt">// Fire custom events</span>
-tele.<span class="fn">track</span>(<span class="str">'signup_complete'</span>, {
-  plan: <span class="str">'pro'</span>, userId: <span class="str">'u_123'</span>
-});
-
-<span class="cmt">// Custom transport (e.g. send to your own backend)</span>
-tele.<span class="fn">config</span>({
-  <span class="fn">onFlush</span>: events =&gt; myApi.<span class="fn">post</span>(events)
-});
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Multiple isolated instances</div>
-      <div class="code-block">
-<span class="kw">import</span> tele <span class="kw">from</span> <span class="str">'tele-js'</span>;
-
-<span class="cmt">// Separate sessions per user role</span>
-<span class="kw">const</span> adminTele = tele.<span class="fn">create</span>({
-  sessionId: <span class="str">`admin-${user.id}`</span>,
-  endpoint: <span class="str">'/admin-telemetry'</span>,
-  capture: { mousemove: <span class="kw">false</span> }
-});
-
-<span class="kw">const</span> guestTele = tele.<span class="fn">create</span>({
-  endpoint: <span class="str">'/guest-telemetry'</span>,
-  flushInterval: <span class="num">10000</span>
-});
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Selective capture + masking</div>
-      <div class="code-block">
-<span class="cmt">// Disable what you don't need</span>
-tele.<span class="fn">config</span>({
+<span class="c-comment">// Configure settings at runtime</span>
+tele.<span class="c-function">config</span>({
+  endpoint: <span class="c-string">'https://api.yourdomain.com/telemetry'</span>,
   capture: {
-    mousemove: <span class="kw">false</span>, <span class="cmt">// skip heatmap data</span>
-    touchmove: <span class="kw">false</span>, <span class="cmt">// disable touch move tracking</span>
-    keydown:   <span class="kw">false</span>, <span class="cmt">// no keystroke logging</span>
+    mousemove: <span class="c-keyword">false</span> <span class="c-comment">// skip tracking mouse moves to save network data</span>
   }
 });
 
-<span class="cmt">// Sensitive fields auto-masked:</span>
-<span class="cmt">// &lt;input type="password"&gt;  → key: '[masked]'</span>
-<span class="cmt">// &lt;input name="card*"&gt;     → key: '[masked]'</span>
-<span class="cmt">// autocomplete="cc-*"      → key: '[masked]'</span>
+<span class="c-comment">// Listen to any event type</span>
+tele.<span class="c-function">on</span>(<span class="c-string">'*'</span>, <span class="c-function">evt</span> =&gt; {
+  <span class="c-keyword">console</span>.<span class="c-function">log</span>(<span class="c-string">`Logged: ${evt.type}`</span>);
+});
 
-<span class="cmt">// Stop capture entirely</span>
-tele.<span class="fn">stop</span>();
-<span class="cmt">// Resume</span>
-tele.<span class="fn">start</span>();
+<span class="c-comment">// Record custom events with payload</span>
+tele.<span class="c-function">track</span>(<span class="c-string">'purchase_completed'</span>, {
+  amount: <span class="c-number">29.99</span>,
+  currency: <span class="c-string">'USD'</span>
+});</code></pre>
+        </div>
+      </div>
+
+      <!-- Tab: Custom Transport -->
+      <div class="tab-content" id="tab-custom">
+        <div class="code-editor-mock">
+          <div class="code-editor-header">
+            <div class="code-editor-dots">
+              <div class="code-editor-dot"></div>
+              <div class="code-editor-dot"></div>
+              <div class="code-editor-dot"></div>
+            </div>
+            <div class="code-editor-title">custom-transport.js</div>
+          </div>
+          <pre class="code-editor-pre"><code><span class="c-keyword">import</span> tele <span class="c-keyword">from</span> <span class="c-string">'telesense'</span>;
+
+<span class="c-comment">// Intercept the flush batching mechanism and route to custom handlers</span>
+tele.<span class="c-function">config</span>({
+  <span class="c-function">onFlush</span>: <span class="c-keyword">async</span> (events) =&gt; {
+    <span class="c-comment">// Send batches to your custom logging microservice or analytics provider</span>
+    <span class="c-keyword">await</span> <span class="c-function">fetch</span>(<span class="c-string">'/my-analytics-gateway'</span>, {
+      method: <span class="c-string">'POST'</span>,
+      headers: { <span class="c-string">'Content-Type'</span>: <span class="c-string">'application/json'</span> },
+      body: JSON.stringify({
+        sentAt: Date.now(),
+        payload: events
+      })
+    });
+  }
+});</code></pre>
+        </div>
+      </div>
+
+      <!-- Tab: Supabase -->
+      <div class="tab-content" id="tab-supabase">
+        <div class="code-editor-mock">
+          <div class="code-editor-header">
+            <div class="code-editor-dots">
+              <div class="code-editor-dot"></div>
+              <div class="code-editor-dot"></div>
+              <div class="code-editor-dot"></div>
+            </div>
+            <div class="code-editor-title">Supabase Setup</div>
+          </div>
+          <pre class="code-editor-pre"><code><span class="c-comment">-- 1. Create a table in your Supabase SQL editor</span>
+<span class="c-keyword">create table</span> telemetry_events (
+  id         bigint generated always as identity primary key,
+  session_id text    not null,
+  event_json jsonb   not null,
+  created_at timestamptz default now()
+);
+
+<span class="c-comment">-- 2. Configure Telesense directly in your frontend app</span>
+tele.<span class="c-function">config</span>({
+  supabaseUrl:     <span class="c-string">'https://yourproject.supabase.co'</span>,
+  supabaseAnonKey: <span class="c-string">'your-anon-public-key'</span>
+});</code></pre>
+        </div>
       </div>
     </div>
-
   </div>
 
-</div><!-- /.shell -->
+  <!-- Footer -->
+  <footer>
+    <div class="footer-wrap">
+      <div class="footer-upper">
+        <div class="footer-desc-block">
+          <a href="#" class="logo-link" style="margin-bottom: 15px;">
+            <div class="logo-badge">T</div>
+            <div class="logo-title">Tele<span>sense</span></div>
+          </a>
+          <p>
+            Telesense is an open-source, ultra-lightweight behavioral analytics library. 
+            It captures visitor signals securely without bloating client bundle size.
+          </p>
+        </div>
+        
+        <div class="footer-links-block">
+          <div class="footer-link-col">
+            <span class="footer-col-title">Documentation</span>
+            <a href="#docs">Quick Start</a>
+            <a href="#playground">API Details</a>
+            <a href="https://github.com/EbParsa/Telesense" target="_blank">Configuration</a>
+          </div>
+          <div class="footer-link-col">
+            <span class="footer-col-title">Community</span>
+            <a href="https://github.com/EbParsa/Telesense" target="_blank">GitHub</a>
+            <a href="https://github.com/EbParsa/Telesense/issues" target="_blank">Issues</a>
+            <a href="https://github.com/EbParsa/Telesense/blob/main/LICENSE" target="_blank">License</a>
+          </div>
+        </div>
+      </div>
 
-<footer>
-  <p>Telesense &nbsp;·&nbsp; <a href="https://github.com/EbParsa/Telesense">GitHub</a> &nbsp;·&nbsp; MIT License</p>
-</footer>
+      <div class="footer-lower">
+        <span>Designed & developed by <a href="https://github.com/EbParsa" target="_blank">EbParsa</a> & <a href="https://github.com/mkhuser" target="_blank">MKH_User</a></span>
+        <span>Released under the MIT License. Copyright © 2026.</span>
+      </div>
+    </div>
+  </footer>
 
-<!-- Load the SDK itself (from dist sibling) -->
-<script src="./dist/tele.umd.js"></script>
+  <!-- Toasts Container -->
+  <div class="toasts-box" id="toast-container"></div>
 
-<script>
-// ── configure a custom transport so the demo works without a server ──────────
+  <!-- Load SDK -->
+  <script src="../dist/tele.umd.js" onerror="this.onerror=null; this.src='https://cdn.jsdelivr.net/npm/telesense/dist/tele.umd.min.js';"></script>
 
-tele.config({
-  onFlush: function(events) {
-    // In demo mode: keep a persistent log in localStorage
-    var key  = 'tele_demo_events';
-    var curr = JSON.parse(localStorage.getItem(key) || '[]');
-    var next = curr.concat(events).slice(-5000);
-    localStorage.setItem(key, JSON.stringify(next));
-  }
-});
+  <!-- Script for UI logic & tracking -->
+  <script>
+    // ── Remove Loading Screen ────────────────────────────────────────────────
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const loader = document.getElementById('loading-screen');
+        loader.classList.add('fade-out');
+      }, 500);
+    });
 
-// ── device detection ─────────────────────────────────────────────────────────
-function detectDevice() {
-  var isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  var hint = document.getElementById('device-type');
-  if (isTouch) {
-    hint.innerHTML = '📱 Touch device detected';
-    hint.style.color = 'var(--cyan)';
-  } else {
-    hint.innerHTML = '💻 Desktop device detected';
-  }
-}
-detectDevice();
+    // ── Setup Telemetry onFlush local store fallback ─────────────────────────
+    // This allows the demo to log locally when running without backend server
+    let localEventHistory = [];
 
-// ── metrics ───────────────────────────────────────────────────────────────────
+    tele.config({
+      onFlush: function(events) {
+        // Keep a copy in memory and localStorage for persistence/visual inspection
+        const key = 'tele_demo_events';
+        try {
+          const curr = JSON.parse(localStorage.getItem(key) || '[]');
+          const next = curr.concat(events).slice(-1000);
+          localStorage.setItem(key, JSON.stringify(next));
+        } catch (_) {}
+        
+        // Show success toast on auto-flush or manual flush
+        showToast('Flushed ' + events.length + ' events to storage!', 'success');
+      }
+    });
 
-var totalEvents = 0, clickCount = 0, maxScroll = 0;
-var allEvents   = [];
-var activeFilter = 'all';
+    // ── Counter metrics & state ──────────────────────────────────────────────
+    let countTotal = 0;
+    let countClicks = 0;
+    let maxScrollPercent = 0;
+    let allTelemetryEvents = [];
+    let activeFilter = 'all';
 
-function updateMetrics() {
-  document.getElementById('m-total').textContent  = totalEvents;
-  document.getElementById('m-clicks').textContent = clickCount;
-  document.getElementById('m-scroll').textContent = maxScroll + '%';
-  document.getElementById('m-queue').textContent  = tele.getQueue().length;
-}
+    function updateStatsDashboard() {
+      document.getElementById('cnt-total').textContent = countTotal;
+      document.getElementById('cnt-clicks').textContent = countClicks;
+      document.getElementById('cnt-scroll').textContent = maxScrollPercent + '%';
+      document.getElementById('cnt-queue').textContent = tele.getQueue().length;
+    }
 
-// ── heatmap ───────────────────────────────────────────────────────────────────
+    // ── Toast notifications handler ──────────────────────────────────────────
+    function showToast(msg, type = 'success') {
+      const box = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `custom-toast ${type}`;
+      
+      let icon = `
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      `;
+      if (type === 'warning') {
+        icon = `
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        `;
+      } else if (type === 'danger') {
+        icon = `
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        `;
+      }
 
-var canvas = document.getElementById('heatmap-canvas');
-var ctx    = canvas.getContext('2d');
+      toast.innerHTML = icon + `<span>${msg}</span>`;
+      box.appendChild(toast);
+      
+      // Auto-remove toast from DOM after animation finishes
+      setTimeout(() => {
+        toast.remove();
+      }, 3300);
+    }
 
-function resizeCanvas() {
-  canvas.width  = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+    // ── Heatmap canvas rendering ─────────────────────────────────────────────
+    const canvas = document.getElementById('sandbox-canvas');
+    const ctx = canvas.getContext('2d');
+    const sandboxIntro = document.getElementById('sandbox-intro');
 
-function paintDot(x, y, isTouch = false) {
-  var rel = canvas.getBoundingClientRect();
-  var cx  = (x - rel.left) * (canvas.width  / rel.width);
-  var cy  = (y - rel.top)  * (canvas.height / rel.height);
-  if (cx < 0 || cy < 0 || cx > canvas.width || cy > canvas.height) return;
+    function resizeHeatmapCanvas() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    
+    // Initial resize and bind resize handler
+    resizeHeatmapCanvas();
+    window.addEventListener('resize', resizeHeatmapCanvas);
 
-  // Different colors for mouse vs touch
-  var color = isTouch ? 'rgba(188,140,255,0.25)' : 'rgba(88,166,255,0.18)';
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.arc(cx, cy, isTouch ? 10 : 8, 0, Math.PI * 2);
-  ctx.fill();
-}
+    function drawGlowDot(x, y, isTouch = false) {
+      const rect = canvas.getBoundingClientRect();
+      // Map screen coords relative to canvas container
+      const localX = (x - rect.left) * (canvas.width / rect.width);
+      const localY = (y - rect.top) * (canvas.height / rect.height);
+      
+      // Ensure the coordinates fall within the canvas sandbox bounds
+      if (localX < 0 || localY < 0 || localX > canvas.width || localY > canvas.height) return;
 
-function clearHeatmap() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
+      // Hide the instruction text once the user interacts with the canvas
+      if (sandboxIntro.style.opacity !== '0') {
+        sandboxIntro.style.opacity = '0';
+        setTimeout(() => sandboxIntro.remove(), 500);
+      }
 
-// ── stream renderer ───────────────────────────────────────────────────────────
+      // Draw glowing gradient particle
+      const radius = isTouch ? 14 : 10;
+      const gradient = ctx.createRadialGradient(localX, localY, 1, localX, localY, radius);
+      
+      if (isTouch) {
+        gradient.addColorStop(0, 'rgba(236, 72, 153, 0.45)');
+        gradient.addColorStop(1, 'rgba(236, 72, 153, 0)');
+      } else {
+        gradient.addColorStop(0, 'rgba(6, 182, 212, 0.35)');
+        gradient.addColorStop(1, 'rgba(6, 182, 212, 0)');
+      }
 
-function renderRow(ev) {
-  var stream = document.getElementById('stream');
-  var row    = document.createElement('div');
-  row.className = 'ev-row';
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(localX, localY, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
-  var touchTypes = ['touchstart', 'touchmove', 'touchend'];
-  var typeClass = touchTypes.includes(ev.type) ? ev.type :
-                  ['click','scroll','mousemove','keydown','keyup','visibility','resize'].includes(ev.type) ? ev.type : 'custom';
+    function clearHeatmapCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      showToast('Heatmap cleared', 'warning');
+    }
 
-  var d = new Date(ev.ts);
-  var ts = d.toLocaleTimeString('en', { hour12: false }) + '.' + String(d.getMilliseconds()).padStart(3,'0');
+    // ── Live Logger Row Renderer ──────────────────────────────────────────────
+    function renderEventRow(ev) {
+      const feed = document.getElementById('log-feed');
+      const emptyState = document.getElementById('log-empty-state');
+      
+      if (emptyState) {
+        emptyState.remove();
+      }
 
-  // Summarise the data payload concisely
-  var summary = '';
-  if (ev.type === 'click')     summary = ev.button + ' @ ' + ev.x + ',' + ev.y;
-  else if (ev.type === 'scroll')    summary = 'y=' + ev.percentY + '%';
-  else if (ev.type === 'mousemove') summary = ev.x + ',' + ev.y;
-  else if (touchTypes.includes(ev.type)) {
-    summary = (ev.touches ? ev.touches + ' touch(es) @ ' : '') + (ev.x || ev.x === 0 ? ev.x + ',' + ev.y : 'end');
-  }
-  else if (ev.type === 'keydown' || ev.type === 'keyup') summary = ev.key;
-  else if (ev.type === 'visibility') summary = ev.state;
-  else if (ev.type === 'resize') summary = ev.width + '×' + ev.height;
-  else summary = JSON.stringify(Object.fromEntries(
-    Object.entries(ev).filter(function(e){ return !['type','ts','sessionId','page'].includes(e[0]); })
-  ));
+      const row = document.createElement('div');
+      row.className = 'event-log-row';
 
-  row.innerHTML =
-    '<span class="ev-ts">' + ts + '</span>' +
-    '<span class="ev-type ' + typeClass + '">' + ev.type + '</span>' +
-    '<span class="ev-data">' + summary + '</span>';
+      const date = new Date(ev.ts);
+      const timestampStr = date.toLocaleTimeString('en', { hour12: false }) + '.' + String(date.getMilliseconds()).padStart(3, '0');
 
-  if (activeFilter === 'all' || activeFilter === typeClass) {
-    stream.insertBefore(row, stream.firstChild);
-    // Cap displayed rows
-    while (stream.childNodes.length > 200) stream.removeChild(stream.lastChild);
-  }
-}
+      let summaryContent = '';
+      let badgeClass = 'badge-custom';
+      
+      // Classify event badges
+      const touchTypes = ['touchstart', 'touchmove', 'touchend'];
+      if (ev.type === 'click') badgeClass = 'badge-click';
+      else if (ev.type === 'scroll') badgeClass = 'badge-scroll';
+      else if (ev.type === 'mousemove') badgeClass = 'badge-mousemove';
+      else if (ev.type === 'keydown') badgeClass = 'badge-keydown';
+      else if (ev.type === 'keyup') badgeClass = 'badge-keyup';
+      else if (touchTypes.includes(ev.type)) badgeClass = `badge-${ev.type}`;
+      else if (ev.type === 'resize') badgeClass = 'badge-resize';
+      else if (ev.type === 'visibility') badgeClass = 'badge-visibility';
+      else badgeClass = 'badge-custom';
 
-// ── subscribe to all events ───────────────────────────────────────────────────
+      // Parse payload details
+      if (ev.type === 'click') {
+        summaryContent = `<span class="key">btn:</span><span class="val">${ev.button}</span> <span class="key">coord:</span><span class="val">${ev.x},${ev.y}</span>`;
+        if (ev.element && ev.element.tag) {
+          summaryContent += ` <span class="key">el:</span><span class="val">&lt;${ev.element.tag}${ev.element.id ? '#' + ev.element.id : ''}&gt;</span>`;
+        }
+      } else if (ev.type === 'scroll') {
+        summaryContent = `<span class="key">depth:</span><span class="val">${ev.percentY}%</span> <span class="key">y:</span><span class="val">${ev.scrollY}px</span>`;
+      } else if (ev.type === 'mousemove') {
+        summaryContent = `<span class="key">coords:</span><span class="val">${ev.x},${ev.y}</span>`;
+      } else if (ev.type === 'keydown' || ev.type === 'keyup') {
+        const keyDisplay = ev.key === '[masked]' ? '<span class="masked">[masked]</span>' : `<span class="val">"${ev.key}"</span>`;
+        const targetDisplay = ev.target === '[sensitive]' ? '<span class="masked">[sensitive input]</span>' : `<span class="val">&lt;${ev.target.tag || 'input'}&gt;</span>`;
+        summaryContent = `<span class="key">key:</span>${keyDisplay} <span class="key">code:</span><span class="val">${ev.code}</span> <span class="key">target:</span>${targetDisplay}`;
+      } else if (touchTypes.includes(ev.type)) {
+        summaryContent = `<span class="key">pts:</span><span class="val">${ev.touches || 0}</span> <span class="key">coord:</span><span class="val">${ev.x || 0},${ev.y || 0}</span>`;
+      } else if (ev.type === 'resize') {
+        summaryContent = `<span class="key">viewport:</span><span class="val">${ev.width}×${ev.height}</span>`;
+      } else if (ev.type === 'visibility') {
+        summaryContent = `<span class="key">state:</span><span class="val">${ev.state}</span>`;
+      } else {
+        // Custom events
+        const cleanPayload = Object.fromEntries(
+          Object.entries(ev).filter(([k]) => !['type', 'ts', 'sessionId', 'page'].includes(k))
+        );
+        summaryContent = `<span class="val">${JSON.stringify(cleanPayload)}</span>`;
+      }
 
-tele.on('*', function(ev) {
-  totalEvents++;
-  allEvents.push(ev);
+      row.innerHTML = `
+        <span class="row-time">${timestampStr}</span>
+        <span class="row-badge ${badgeClass}">${ev.type}</span>
+        <div class="row-details">${summaryContent}</div>
+      `;
 
-  if (ev.type === 'click') clickCount++;
-  if (ev.type === 'scroll' && typeof ev.percentY === 'number') maxScroll = Math.max(maxScroll, ev.percentY);
+      // Filter check
+      let matchesFilter = false;
+      if (activeFilter === 'all') {
+        matchesFilter = true;
+      } else if (activeFilter === 'touch') {
+        matchesFilter = touchTypes.includes(ev.type);
+      } else {
+        matchesFilter = (ev.type === activeFilter);
+      }
 
-  // Paint on heatmap for both mouse and touch move events
-  if (ev.type === 'mousemove' && ev.x && ev.y) paintDot(ev.x, ev.y, false);
-  if (ev.type === 'touchmove' && ev.x && ev.y) paintDot(ev.x, ev.y, true);
+      if (matchesFilter) {
+        feed.insertBefore(row, feed.firstChild);
+        // limit rows to 100 max entries
+        while (feed.childNodes.length > 100) {
+          feed.removeChild(feed.lastChild);
+        }
+      }
+    }
 
-  renderRow(ev);
-  updateMetrics();
-});
+    // ── Subscribe to Telesense SDK events ────────────────────────────────────
+    tele.on('*', function(ev) {
+      countTotal++;
+      allTelemetryEvents.push(ev);
 
-// ── filter pills ──────────────────────────────────────────────────────────────
+      if (ev.type === 'click') {
+        countClicks++;
+      }
+      if (ev.type === 'scroll' && typeof ev.percentY === 'number') {
+        maxScrollPercent = Math.max(maxScrollPercent, ev.percentY);
+      }
 
-document.getElementById('filters').addEventListener('click', function(e) {
-  var pill = e.target.closest('.filter-pill');
-  if (!pill) return;
-  document.querySelectorAll('.filter-pill').forEach(function(p){ p.classList.remove('active'); });
-  pill.classList.add('active');
-  activeFilter = pill.dataset.type;
+      // Draw relative coordinates if coordinates exist
+      if (ev.x && ev.y) {
+        if (ev.type === 'mousemove') {
+          drawGlowDot(ev.x, ev.y, false);
+        } else if (ev.type === 'touchmove' || ev.type === 'touchstart') {
+          drawGlowDot(ev.x, ev.y, true);
+        }
+      }
 
-  // Rebuild stream with current filter
-  var stream = document.getElementById('stream');
-  stream.innerHTML = '';
-  var filtered = allEvents.filter(function(ev){
-    if (activeFilter === 'all') return true;
-    var tc = ['click','scroll','mousemove','touchstart','touchmove','touchend','keydown','keyup','visibility','resize'].includes(ev.type) ? ev.type : 'custom';
-    return tc === activeFilter;
-  }).slice(-200).reverse();
-  filtered.forEach(renderRow);
-});
+      renderEventRow(ev);
+      updateStatsDashboard();
+    });
 
-// ── playground buttons ────────────────────────────────────────────────────────
+    // ── Stream Filter Pills click logic ──────────────────────────────────────
+    document.getElementById('feed-filters').addEventListener('click', (e) => {
+      const btn = e.target.closest('.pill-btn');
+      if (!btn) return;
+      
+      document.querySelectorAll('.pill-btn').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.filter;
 
-function out(text) {
-  document.getElementById('pg-output').textContent = text;
-}
+      // Clear & Re-render log history based on filters
+      const feed = document.getElementById('log-feed');
+      feed.innerHTML = '';
+      
+      const touchTypes = ['touchstart', 'touchmove', 'touchend'];
+      const filtered = allTelemetryEvents.filter(ev => {
+        if (activeFilter === 'all') return true;
+        if (activeFilter === 'touch') return touchTypes.includes(ev.type);
+        return ev.type === activeFilter;
+      }).slice(-100);
 
-function fireCustom() {
-  var type  = document.getElementById('custom-type').value.trim() || 'custom';
-  var raw   = document.getElementById('custom-data').value.trim();
-  var data  = {};
-  try { data = JSON.parse(raw); } catch(_) { data = { raw: raw }; }
-  tele.track(type, data);
-  out('tele.track("' + type + '", ' + JSON.stringify(data, null, 2) + ')\n// ✓ event queued');
-}
+      if (filtered.length === 0) {
+        feed.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon-ring">
+              <svg class="svg-icon-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <p>No matches found for filter: "${activeFilter.toUpperCase()}".</p>
+          </div>
+        `;
+      } else {
+        filtered.forEach(renderEventRow);
+      }
+    });
 
-function showQueue() {
-  var q = tele.getQueue();
-  out('tele.getQueue() → ' + q.length + ' event(s)\n\n' + JSON.stringify(q.slice(-3), null, 2) + (q.length > 3 ? '\n…' : ''));
-}
+    // ── API Console Play Button Actions ──────────────────────────────────────
+    const consoleOut = document.getElementById('terminal-out');
+    
+    function logToConsole(text) {
+      consoleOut.textContent = text;
+      consoleOut.scrollTop = consoleOut.scrollHeight;
+    }
 
-function doFlush() {
-  var before = tele.getQueue().length;
-  tele.flush();
-  out('tele.flush()\n// flushed ' + before + ' event(s) → onFlush transport');
-}
+    function executeTrack() {
+      const type = document.getElementById('api-evt-name').value.trim() || 'custom';
+      const rawPayload = document.getElementById('api-evt-data').value.trim();
+      let data = {};
+      try {
+        data = JSON.parse(rawPayload);
+      } catch (_) {
+        data = { raw: rawPayload };
+      }
+      
+      tele.track(type, data);
+      
+      logToConsole(`tele.track("${type}", ${JSON.stringify(data, null, 2)});\n\n// ✓ Event tracked successfully and added to queue.`);
+      showToast('Custom event tracked: ' + type);
+    }
 
-function doReset() {
-  var before = tele.getQueue().length;
-  tele.reset();
-  out('tele.reset()\n// cleared ' + before + ' event(s) from queue (not sent)');
-  updateMetrics();
-}
+    function executeGetQueue() {
+      const q = tele.getQueue();
+      logToConsole(`tele.getQueue();\n\n// → Returned array with ${q.length} elements:\n` + JSON.stringify(q, null, 2));
+      showToast('Fetched queue (' + q.length + ' items)');
+    }
 
-function showSession() {
-  out('tele.sessionId\n// → "' + tele.sessionId + '"');
-}
+    function executeFlush() {
+      const qSize = tele.getQueue().length;
+      tele.flush();
+      logToConsole(`tele.flush();\n\n// ✓ Queue flushed. Dispatched ${qSize} event(s) to transport handler.`);
+      updateStatsDashboard();
+    }
 
-function copyInstall() {
-  navigator.clipboard.writeText(document.getElementById('install-text').textContent);
-  var btn = document.querySelector('.copy-btn');
-  btn.textContent = 'copied!';
-  setTimeout(function(){ btn.textContent = 'copy'; }, 1500);
-}
+    function executeSessionId() {
+      logToConsole(`tele.sessionId;\n\n// → "${tele.sessionId}"`);
+      showToast('Copied Session ID');
+    }
 
-// ── update queue size every second ───────────────────────────────────────────
-setInterval(updateMetrics, 1000);
-</script>
+    function executeReset() {
+      const qSize = tele.getQueue().length;
+      tele.reset();
+      logToConsole(`tele.reset();\n\n// ✓ Reset completed. Cleared ${qSize} event(s) from local queue.`);
+      showToast('Queue reset complete', 'warning');
+      updateStatsDashboard();
+    }
+
+    // Toggle Active Event listeners on / off (Start / Stop)
+    let isTrackingActive = true;
+    function toggleTrackingListeners() {
+      const btn = document.getElementById('btn-toggle-listen');
+      const statusBadge = document.getElementById('status-badge');
+      const statusBadgeText = document.getElementById('status-badge-text');
+
+      if (isTrackingActive) {
+        tele.stop();
+        isTrackingActive = false;
+        btn.textContent = 'PAUSED';
+        btn.style.borderColor = 'var(--danger)';
+        btn.style.color = 'var(--danger)';
+        statusBadge.classList.add('inactive');
+        statusBadgeText.textContent = 'Telesense Paused';
+        logToConsole(`tele.stop();\n\n// ✗ DOM Event Capture Listeners Suspended.`);
+        showToast('Tracking listeners paused', 'warning');
+      } else {
+        tele.start();
+        isTrackingActive = true;
+        btn.textContent = 'ACTIVE';
+        btn.style.borderColor = 'var(--primary)';
+        btn.style.color = 'var(--primary)';
+        statusBadge.classList.remove('inactive');
+        statusBadgeText.textContent = 'Telesense Active';
+        logToConsole(`tele.start();\n\n// ✓ DOM Event Capture Listeners Active.`);
+        showToast('Tracking listeners activated', 'success');
+      }
+    }
+
+    // ── Documentation Tabs Switching ────────────────────────────────────────
+    function switchTab(evt, tabId) {
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      evt.currentTarget.classList.add('active');
+    }
+
+    // Copy install scripts / codes helper
+    function copyInstallCmd() {
+      const cmdText = document.getElementById('terminal-install-cmd').innerText;
+      navigator.clipboard.writeText(cmdText);
+      
+      const copyBtnText = document.getElementById('copy-btn-text');
+      copyBtnText.textContent = 'Copied!';
+      setTimeout(() => {
+        copyBtnText.textContent = 'Copy';
+      }, 2000);
+      
+      showToast('Installation command copied to clipboard');
+    }
+
+    // Update queue stats on tick
+    setInterval(updateStatsDashboard, 800);
+  </script>
 </body>
 </html>
