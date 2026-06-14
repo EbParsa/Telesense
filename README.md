@@ -70,13 +70,14 @@ tele.track('signup_complete', { plan: 'pro' });
 |------|---------------|
 | `click` | `button`, `x`, `y`, `element` |
 | `mousemove` | `x`, `y` (throttled 100 ms) |
+| `touchstart`, `touchmove`, `touchend` | `x`, `y`, `touches`, `element` |
 | `scroll` | `scrollX`, `scrollY`, `percentX`, `percentY` |
 | `keydown` / `keyup` | `key`, `code`, `target` — sensitive fields auto-masked |
 | `visibility` | `state` (`active` \| `inactive`) |
 | `resize` | `width`, `height` |
 | _custom_ | anything you pass to `tele.track()` |
 
-Sensitive inputs (`type="password"`, `name="card*"`, `autocomplete="cc-*"`) are detected automatically — `key` is replaced with `[masked]`.
+Sensitive inputs (`type="password"`, `name="card*"`, `autocomplete="cc-*"`) are detected automatically — input key is replaced with `[masked]`.
 
 ---
 
@@ -161,17 +162,21 @@ window.TELE_CONFIG = {
   maxQueue:        500,    // max in-memory events before forced flush
   maxStored:       20000,  // max events in localStorage fallback
   mouseThrottle:   100,    // ms between mousemove samples
+  scrollThrottle:  100,    // ms between scroll samples
   sessionId:       null,   // supply your own or one is generated
 
   // ── toggle individual event types
   capture: {
     click:      true,
     mousemove:  true,
+    touchstart: true,
+    touchmove:  true,
+    touchend:   true,
     scroll:     true,
     keydown:    true,
     keyup:      true,
     visibility: true,
-    resize:     true,
+    resize:     true
   },
 
   // ── custom transport (overrides endpoint + supabase)

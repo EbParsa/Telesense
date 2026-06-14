@@ -79,6 +79,8 @@ export interface TeleConfig {
   maxStored?: number;
   /** Minimum ms between mousemove samples (default: 100) */
   mouseThrottle?: number;
+  /** Minimum ms between scroll samples (default: 100) */
+  scrollThrottle?: number;
   /** Supply your own session ID, otherwise one is generated */
   sessionId?: string;
   /** Toggle individual event types */

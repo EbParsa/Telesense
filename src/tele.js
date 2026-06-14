@@ -20,6 +20,7 @@
     maxQueue:        500,         // Max events held in memory before forced flush
     maxStored:       20000,       // Max events kept in localStorage fallback
     mouseThrottle:   100,         // ms between mousemove samples
+    scrollThrottle:  100,         // ms between scroll samples
     sessionId:       null,        // Supply your own or one is generated
     capture: {                    // Modify captured events
       click:      true,
@@ -285,15 +286,27 @@
       }
 
       if (cfg.capture.scroll) {
+        let lastScroll = 0;
+        let rafId = null;
+
         handlers.scroll = () => {
-          const doc  = document.documentElement;
-          const maxY = Math.max(1, doc.scrollHeight - window.innerHeight);
-          const maxX = Math.max(1, doc.scrollWidth  - window.innerWidth);
-          record('scroll', {
-            scrollX:  window.scrollX,
-            scrollY:  window.scrollY,
-            percentX: Math.round((window.scrollX / maxX) * 100),
-            percentY: Math.round((window.scrollY / maxY) * 100),
+          const now = Date.now();
+          if (now - lastScroll < cfg.scrollThrottle) return;
+          lastScroll = now;
+
+          if (rafId) return;
+          rafId = requestAnimationFrame(() => {
+            rafId = null;
+
+            const doc  = document.documentElement;
+            const maxY = Math.max(1, doc.scrollHeight - window.innerHeight);
+            const maxX = Math.max(1, doc.scrollWidth  - window.innerWidth);
+            record('scroll', {
+              scrollX:  window.scrollX,
+              scrollY:  window.scrollY,
+              percentX: Math.round((window.scrollX / maxX) * 100),
+              percentY: Math.round((window.scrollY / maxY) * 100),
+            });
           });
         };
         document.addEventListener('scroll', handlers.scroll, { passive: true });
