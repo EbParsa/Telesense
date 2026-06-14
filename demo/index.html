@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Telesense — Premium Behavioral Telemetry SDK Demo</title>
+  <title>Telesense — Open-source Behavioral Telemetry SDK Demo</title>
   <meta name="description"
-    content="Interactive demo page for Telesense, a lightweight, zero-dependency behavioral telemetry SDK designed by EbParsa and MKH_User." />
+    content="Interactive demo page for Telesense, a lightweight, zero-dependency behavioral telemetry SDK" />
 
   <!-- Modern Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -353,6 +353,7 @@
       background-clip: text;
       -webkit-text-fill-color: transparent;
       display: inline-block;
+      line-height: normal;
     }
 
     .hero-lead {
@@ -367,6 +368,10 @@
     .hero-lead strong {
       color: var(--text-primary);
       font-weight: 600;
+    }
+
+    .btn-primary {
+      align-self: center;
     }
 
     .hero-buttons {
@@ -480,7 +485,7 @@
     .dashboard-wrapper {
       max-width: 1300px;
       margin: 0 auto;
-      padding: 0 2rem 4rem;
+      padding: 0 2rem;
     }
 
     /* Headline of sections */
@@ -1693,8 +1698,8 @@
     </h1>
 
     <p class="hero-lead">
-      A lightweight, zero-dependency behavioral telemetry SDK designed by <strong>EbParsa</strong> and
-      <strong>MKH_User</strong>.
+      A lightweight, zero-dependency behavioral telemetry SDK
+      <br>
       Capture clicks, scrolls, keypresses, and heatmap data with a drop-in script tag or clean JS API in less than
       <strong>20 kB</strong>.
     </p>
@@ -1730,7 +1735,7 @@
     <!-- Feature specs row -->
     <div class="specs-grid">
       <div class="spec-item">
-        <i>✓</i> <b>9.7 kB</b> Minified Size
+        <i>✓</i> <b>20 kB</b> Minified Size
       </div>
       <div class="spec-item">
         <i>✓</i> <b>Zero</b> Dependencies
@@ -2085,10 +2090,10 @@
           <tbody>
             <tr>
               <td class="bold-cell">Bundle Footprint</td>
-              <td class="highlight-col bold-cell">&lt; 10 kB (minified)</td>
-              <td>~60 kB</td>
-              <td>~80 kB</td>
-              <td>~120 kB</td>
+              <td class="highlight-col bold-cell">&lt; 20 kB (minified)</td>
+              <td class="icon-fail">~60 kB</td>
+              <td class="icon-fail">~80 kB</td>
+              <td class="icon-fail">~120 kB</td>
             </tr>
             <tr>
               <td class="bold-cell">Self-Host Option</td>
@@ -2255,7 +2260,7 @@ tele.<span class="c-function">config</span>({
           </div>
           <pre class="code-editor-pre"><code><span class="c-comment">-- 1. Create a table in your Supabase SQL editor</span>
 <span class="c-keyword">create table</span> telemetry_events (
-  id         bigint generated always as identity primary key,
+ id         <span class="c-keyword">bigint generated always as identity primary key</span>,
   session_id text    not null,
   event_json jsonb   not null,
   created_at timestamptz default now()
@@ -2291,7 +2296,7 @@ tele.<span class="c-function">config</span>({
             <span class="footer-col-title">Documentation</span>
             <a href="#docs">Quick Start</a>
             <a href="#playground">API Details</a>
-            <a href="https://github.com/EbParsa/Telesense" target="_blank">Configuration</a>
+            <a href="https://github.com/EbParsa/Telesense#Configuration" target="_blank">Configuration</a>
           </div>
           <div class="footer-link-col">
             <span class="footer-col-title">Community</span>
@@ -2303,8 +2308,7 @@ tele.<span class="c-function">config</span>({
       </div>
 
       <div class="footer-lower">
-        <span>Designed & developed by <a href="https://github.com/EbParsa" target="_blank">EbParsa</a> & <a
-            href="https://github.com/mkhuser" target="_blank">MKH_User</a></span>
+        <span>Designed & developed by <a href="https://github.com/EbParsa" target="_blank">EbParsa</a></span>
         <span>Released under the MIT License. Copyright © 2026.</span>
       </div>
     </div>
