@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Telesense — Premium Behavioral Telemetry SDK Demo</title>
-  <meta name="description" content="Interactive demo page for Telesense, a lightweight, zero-dependency behavioral telemetry SDK designed by EbParsa and MKH_User." />
-  
+  <meta name="description"
+    content="Interactive demo page for Telesense, a lightweight, zero-dependency behavioral telemetry SDK designed by EbParsa and MKH_User." />
+
   <!-- Modern Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
   <style>
     :root {
       --bg-dark: #060814;
@@ -18,44 +22,49 @@
       --bg-code: #05070e;
       --border-color: rgba(255, 255, 255, 0.07);
       --border-color-hover: rgba(6, 182, 212, 0.3);
-      
-      --primary: #06b6d4; /* Neon Cyan */
+
+      --primary: #06b6d4;
+      /* Neon Cyan */
       --primary-rgb: 6, 182, 212;
-      --secondary: #8b5cf6; /* Electric Violet */
+      --secondary: #8b5cf6;
+      /* Electric Violet */
       --secondary-rgb: 139, 92, 246;
-      --accent: #ec4899; /* Hot Pink */
+      --accent: #ec4899;
+      /* Hot Pink */
       --accent-rgb: 236, 72, 153;
-      
+
       --text-primary: #f8fafc;
       --text-secondary: #94a3b8;
       --text-muted: #475569;
-      
+
       --success: #10b981;
       --warning: #f59e0b;
       --danger: #ef4444;
-      
+
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
-      
+
       --radius-lg: 20px;
       --radius-md: 14px;
       --radius-sm: 8px;
-      
+
       --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       --transition-fast: all 0.2s ease;
     }
 
     /* Reset & Base Styles */
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-    
+
     html {
       scroll-behavior: smooth;
     }
-    
+
     body {
       font-family: var(--font-sans);
       background-color: var(--bg-dark);
@@ -63,7 +72,7 @@
       min-height: 100vh;
       overflow-x: hidden;
       line-height: 1.6;
-      background-image: 
+      background-image:
         radial-gradient(circle at 10% 15%, rgba(6, 182, 212, 0.07) 0%, transparent 35%),
         radial-gradient(circle at 90% 85%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
         radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.04) 0%, transparent 50%),
@@ -78,13 +87,16 @@
       width: 8px;
       height: 8px;
     }
+
     ::-webkit-scrollbar-track {
       background: var(--bg-dark);
     }
+
     ::-webkit-scrollbar-thumb {
       background: rgba(6, 182, 212, 0.15);
       border-radius: 4px;
     }
+
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(6, 182, 212, 0.35);
     }
@@ -104,16 +116,19 @@
       z-index: 9999;
       transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
     }
+
     .loading-screen.fade-out {
       opacity: 0;
       visibility: hidden;
     }
+
     .loader {
       position: relative;
       width: 70px;
       height: 70px;
       margin-bottom: 20px;
     }
+
     .loader-ring {
       position: absolute;
       width: 100%;
@@ -123,6 +138,7 @@
       border-radius: 50%;
       animation: spin 1.4s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
     }
+
     .loader-ring-inner {
       position: absolute;
       top: 8px;
@@ -134,6 +150,7 @@
       border-radius: 50%;
       animation: spin 1s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite reverse;
     }
+
     .loader-text {
       font-size: 11px;
       text-transform: uppercase;
@@ -144,12 +161,25 @@
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
+
     @keyframes pulse {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 1; }
+
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 1;
+      }
     }
 
     /* Header & Navigation */
@@ -163,6 +193,7 @@
       border-bottom: 1px solid var(--border-color);
       transition: var(--transition-fast);
     }
+
     .header-container {
       max-width: 1300px;
       margin: 0 auto;
@@ -171,12 +202,14 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .logo-link {
       display: flex;
       align-items: center;
       gap: 12px;
       text-decoration: none;
     }
+
     .logo-badge {
       width: 36px;
       height: 36px;
@@ -190,6 +223,7 @@
       font-size: 20px;
       box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
     }
+
     .logo-title {
       font-size: 22px;
       font-weight: 800;
@@ -199,16 +233,19 @@
       -webkit-text-fill-color: transparent;
       letter-spacing: -0.5px;
     }
+
     .logo-title span {
       background: linear-gradient(to right, var(--primary), var(--secondary));
       -webkit-background-clip: text;
       background-clip: text;
     }
+
     .nav-menu {
       display: flex;
       align-items: center;
       gap: 2rem;
     }
+
     .nav-item {
       color: var(--text-secondary);
       text-decoration: none;
@@ -216,9 +253,11 @@
       font-weight: 600;
       transition: var(--transition-fast);
     }
+
     .nav-item:hover {
       color: var(--primary);
     }
+
     .btn-github-nav {
       display: flex;
       align-items: center;
@@ -233,6 +272,7 @@
       text-decoration: none;
       transition: var(--transition-fast);
     }
+
     .btn-github-nav:hover {
       background: rgba(255, 255, 255, 0.08);
       border-color: rgba(255, 255, 255, 0.2);
@@ -247,6 +287,7 @@
       text-align: center;
       position: relative;
     }
+
     .status-badge {
       display: inline-flex;
       align-items: center;
@@ -263,6 +304,7 @@
       letter-spacing: 1px;
       box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
     }
+
     .status-dot {
       width: 8px;
       height: 8px;
@@ -270,21 +312,31 @@
       border-radius: 50%;
       animation: pulse-glow 1.5s infinite;
     }
+
     .status-badge.inactive {
       background: rgba(239, 68, 68, 0.06);
       border-color: rgba(239, 68, 68, 0.2);
       color: var(--danger);
       box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);
     }
+
     .status-badge.inactive .status-dot {
       background-color: var(--danger);
       animation: none;
     }
 
     @keyframes pulse-glow {
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-      70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+      0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+      }
     }
 
     .hero-h1 {
@@ -294,6 +346,7 @@
       letter-spacing: -2.5px;
       margin-bottom: 1.5rem;
     }
+
     .gradient-text {
       background: linear-gradient(135deg, var(--primary) 0%, #38bdf8 30%, var(--secondary) 70%, var(--accent) 100%);
       -webkit-background-clip: text;
@@ -301,6 +354,7 @@
       -webkit-text-fill-color: transparent;
       display: inline-block;
     }
+
     .hero-lead {
       font-size: clamp(16px, 2.5vw, 21px);
       color: var(--text-secondary);
@@ -309,6 +363,7 @@
       line-height: 1.6;
       font-weight: 400;
     }
+
     .hero-lead strong {
       color: var(--text-primary);
       font-weight: 600;
@@ -321,7 +376,7 @@
       margin-bottom: 3.5rem;
       flex-wrap: wrap;
     }
-    
+
     /* Code command block */
     .command-terminal {
       display: flex;
@@ -335,10 +390,12 @@
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
       transition: var(--transition-smooth);
     }
+
     .command-terminal:hover {
       border-color: var(--border-color-hover);
       box-shadow: 0 10px 40px rgba(6, 182, 212, 0.08);
     }
+
     .terminal-prefix {
       color: var(--accent);
       font-weight: bold;
@@ -347,6 +404,7 @@
       font-size: 13px;
       user-select: none;
     }
+
     .terminal-code {
       flex-grow: 1;
       text-align: left;
@@ -357,9 +415,11 @@
       white-space: nowrap;
       scrollbar-width: none;
     }
+
     .terminal-code::-webkit-scrollbar {
       display: none;
     }
+
     .btn-copy-terminal {
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -376,6 +436,7 @@
       align-items: center;
       gap: 6px;
     }
+
     .btn-copy-terminal:hover {
       color: var(--primary);
       background: rgba(6, 182, 212, 0.08);
@@ -393,6 +454,7 @@
       padding-top: 3rem;
       border-top: 1px solid rgba(255, 255, 255, 0.05);
     }
+
     .spec-item {
       display: flex;
       align-items: center;
@@ -401,12 +463,14 @@
       color: var(--text-secondary);
       transition: var(--transition-fast);
     }
+
     .spec-item i {
       color: var(--primary);
       font-size: 18px;
       display: flex;
       align-items: center;
     }
+
     .spec-item:hover {
       color: var(--text-primary);
       transform: translateY(-1px);
@@ -428,6 +492,7 @@
       flex-wrap: wrap;
       gap: 1rem;
     }
+
     .section-title {
       font-size: clamp(22px, 3.5vw, 32px);
       font-weight: 800;
@@ -436,6 +501,7 @@
       -webkit-background-clip: text;
       background-clip: text;
     }
+
     .section-subtitle {
       font-size: 14px;
       color: var(--text-secondary);
@@ -450,17 +516,19 @@
       gap: 1.5rem;
       margin-bottom: 2rem;
     }
+
     @media (max-width: 1024px) {
       .counters-grid {
         grid-template-columns: repeat(2, 1fr);
       }
     }
+
     @media (max-width: 600px) {
       .counters-grid {
         grid-template-columns: 1fr;
       }
     }
-    
+
     .counter-card {
       background: var(--bg-card);
       backdrop-filter: blur(12px);
@@ -472,11 +540,13 @@
       overflow: hidden;
       transition: var(--transition-smooth);
     }
+
     .counter-card:hover {
       border-color: var(--border-color-hover);
       transform: translateY(-3px);
       box-shadow: 0 10px 30px rgba(6, 182, 212, 0.05);
     }
+
     .counter-card::after {
       content: '';
       position: absolute;
@@ -487,12 +557,15 @@
       background: linear-gradient(90deg, var(--primary), var(--secondary));
       opacity: 0.6;
     }
+
     .counter-card.accent::after {
       background: linear-gradient(90deg, var(--secondary), var(--accent));
     }
+
     .counter-card.pink::after {
       background: linear-gradient(90deg, var(--accent), var(--primary));
     }
+
     .counter-card.success::after {
       background: linear-gradient(90deg, var(--success), var(--primary));
     }
@@ -503,6 +576,7 @@
       align-items: center;
       margin-bottom: 0.75rem;
     }
+
     .counter-label {
       font-size: 11px;
       font-weight: 700;
@@ -510,14 +584,24 @@
       letter-spacing: 1.5px;
       color: var(--text-secondary);
     }
+
     .counter-icon {
       color: var(--primary);
       display: flex;
       align-items: center;
     }
-    .counter-card.accent .counter-icon { color: var(--secondary); }
-    .counter-card.pink .counter-icon { color: var(--accent); }
-    .counter-card.success .counter-icon { color: var(--success); }
+
+    .counter-card.accent .counter-icon {
+      color: var(--secondary);
+    }
+
+    .counter-card.pink .counter-icon {
+      color: var(--accent);
+    }
+
+    .counter-card.success .counter-icon {
+      color: var(--success);
+    }
 
     .counter-val {
       font-size: 36px;
@@ -529,12 +613,14 @@
       align-items: baseline;
       gap: 2px;
     }
+
     .counter-unit {
       font-size: 16px;
       color: var(--text-secondary);
       font-weight: 500;
       font-family: var(--font-sans);
     }
+
     .counter-desc {
       font-size: 12px;
       color: var(--text-muted);
@@ -548,6 +634,7 @@
       gap: 2rem;
       margin-bottom: 2rem;
     }
+
     @media (max-width: 1024px) {
       .dashboard-two-col {
         grid-template-columns: 1fr;
@@ -565,6 +652,7 @@
       flex-direction: column;
       transition: var(--transition-smooth);
     }
+
     .glass-card:hover {
       border-color: rgba(255, 255, 255, 0.12);
     }
@@ -576,12 +664,14 @@
       align-items: center;
       margin-bottom: 1.25rem;
     }
+
     .filter-pills-row {
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
       margin-bottom: 1.25rem;
     }
+
     .pill-btn {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -595,10 +685,12 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
+
     .pill-btn:hover {
       border-color: rgba(255, 255, 255, 0.2);
       color: var(--text-primary);
     }
+
     .pill-btn.active {
       background: rgba(6, 182, 212, 0.12);
       border-color: var(--primary);
@@ -619,6 +711,7 @@
       display: flex;
       flex-direction: column;
     }
+
     .empty-state {
       display: flex;
       flex-direction: column;
@@ -630,17 +723,19 @@
       gap: 10px;
       padding: 2rem;
     }
+
     .empty-icon-ring {
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      border: 2px dashed rgba(255,255,255,0.08);
+      border: 2px dashed rgba(255, 255, 255, 0.08);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--text-muted);
       animation: pulse 2s infinite ease-in-out;
     }
+
     .empty-state p {
       font-size: 13px;
       max-width: 250px;
@@ -656,12 +751,21 @@
       animation: eventSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       transition: var(--transition-fast);
     }
+
     .event-log-row:hover {
       background: rgba(255, 255, 255, 0.02);
     }
+
     @keyframes eventSlideIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .row-time {
@@ -670,6 +774,7 @@
       padding-top: 3px;
       white-space: nowrap;
     }
+
     .row-badge {
       padding: 2px 8px;
       border-radius: 4px;
@@ -680,19 +785,75 @@
       text-align: center;
       flex-shrink: 0;
     }
-    
+
     /* Specific badge styling */
-    .badge-click { background: rgba(6, 182, 212, 0.1); color: var(--primary); border: 1px solid rgba(6, 182, 212, 0.2); }
-    .badge-scroll { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
-    .badge-mousemove { background: rgba(139, 92, 246, 0.1); color: var(--secondary); border: 1px solid rgba(139, 92, 246, 0.2); }
-    .badge-keydown { background: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
-    .badge-keyup { background: rgba(245, 158, 11, 0.05); color: var(--warning); opacity: 0.8; border: 1px solid rgba(245, 158, 11, 0.1); }
-    .badge-touchstart { background: rgba(236, 72, 153, 0.1); color: var(--accent); border: 1px solid rgba(236, 72, 153, 0.2); }
-    .badge-touchmove { background: rgba(236, 72, 153, 0.06); color: var(--accent); opacity: 0.9; border: 1px solid rgba(236, 72, 153, 0.1); }
-    .badge-touchend { background: rgba(236, 72, 153, 0.12); color: var(--accent); border: 1px solid rgba(236, 72, 153, 0.25); }
-    .badge-resize { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
-    .badge-visibility { background: rgba(249, 115, 22, 0.1); color: var(--orange); border: 1px solid rgba(249, 115, 22, 0.2); }
-    .badge-custom { background: rgba(236, 72, 153, 0.08); color: var(--accent); border: 1px solid rgba(236, 72, 153, 0.2); }
+    .badge-click {
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--primary);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+    }
+
+    .badge-scroll {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-mousemove {
+      background: rgba(139, 92, 246, 0.1);
+      color: var(--secondary);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .badge-keydown {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .badge-keyup {
+      background: rgba(245, 158, 11, 0.05);
+      color: var(--warning);
+      opacity: 0.8;
+      border: 1px solid rgba(245, 158, 11, 0.1);
+    }
+
+    .badge-touchstart {
+      background: rgba(236, 72, 153, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(236, 72, 153, 0.2);
+    }
+
+    .badge-touchmove {
+      background: rgba(236, 72, 153, 0.06);
+      color: var(--accent);
+      opacity: 0.9;
+      border: 1px solid rgba(236, 72, 153, 0.1);
+    }
+
+    .badge-touchend {
+      background: rgba(236, 72, 153, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(236, 72, 153, 0.25);
+    }
+
+    .badge-resize {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .badge-visibility {
+      background: rgba(249, 115, 22, 0.1);
+      color: var(--orange);
+      border: 1px solid rgba(249, 115, 22, 0.2);
+    }
+
+    .badge-custom {
+      background: rgba(236, 72, 153, 0.08);
+      color: var(--accent);
+      border: 1px solid rgba(236, 72, 153, 0.2);
+    }
 
     .row-details {
       color: var(--text-secondary);
@@ -701,17 +862,31 @@
       flex-grow: 1;
       scrollbar-width: none;
     }
+
     .row-details::-webkit-scrollbar {
       display: none;
     }
-    .row-details span.key { color: var(--text-muted); margin-right: 2px; }
-    .row-details span.val { color: var(--text-primary); margin-right: 8px; }
-    .row-details span.masked { color: var(--warning); font-weight: 600; }
+
+    .row-details span.key {
+      color: var(--text-muted);
+      margin-right: 2px;
+    }
+
+    .row-details span.val {
+      color: var(--text-primary);
+      margin-right: 8px;
+    }
+
+    .row-details span.masked {
+      color: var(--warning);
+      font-weight: 600;
+    }
 
     /* Canvas Sandbox Card */
     .sandbox-card {
       height: 480px;
     }
+
     .sandbox-container {
       position: relative;
       flex-grow: 1;
@@ -724,16 +899,18 @@
       justify-content: center;
       touch-action: none;
     }
+
     .sandbox-grid {
       position: absolute;
       width: 100%;
       height: 100%;
-      background-image: 
+      background-image:
         linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
       background-size: 20px 20px;
       pointer-events: none;
     }
+
     .sandbox-canvas {
       position: absolute;
       top: 0;
@@ -743,6 +920,7 @@
       display: block;
       z-index: 1;
     }
+
     .sandbox-intro {
       position: absolute;
       text-align: center;
@@ -752,6 +930,7 @@
       transition: opacity 0.5s ease;
       max-width: 280px;
     }
+
     .sandbox-intro i {
       font-size: 32px;
       color: var(--primary);
@@ -760,35 +939,48 @@
       display: inline-block;
       animation: float 3s ease-in-out infinite;
     }
+
     .sandbox-intro p {
       font-size: 13px;
       line-height: 1.5;
     }
+
     .sandbox-footer-controls {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-top: 1rem;
     }
+
     .legend-box {
       display: flex;
       gap: 12px;
       font-size: 11px;
       color: var(--text-secondary);
     }
+
     .legend-indicator {
       display: flex;
       align-items: center;
       gap: 5px;
     }
+
     .legend-glow-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
     }
-    .legend-glow-dot.cyan { background-color: var(--primary); box-shadow: 0 0 8px var(--primary); }
-    .legend-glow-dot.violet { background-color: var(--secondary); box-shadow: 0 0 8px var(--secondary); }
-    
+
+    .legend-glow-dot.cyan {
+      background-color: var(--primary);
+      box-shadow: 0 0 8px var(--primary);
+    }
+
+    .legend-glow-dot.violet {
+      background-color: var(--secondary);
+      box-shadow: 0 0 8px var(--secondary);
+    }
+
     .panel-btn {
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -803,11 +995,13 @@
       align-items: center;
       gap: 6px;
     }
+
     .panel-btn:hover {
       background: rgba(255, 255, 255, 0.08);
       border-color: rgba(255, 255, 255, 0.18);
       color: var(--text-primary);
     }
+
     .panel-btn.danger-btn:hover {
       border-color: var(--danger);
       color: var(--danger);
@@ -821,6 +1015,7 @@
       gap: 2rem;
       margin-bottom: 3rem;
     }
+
     @media (max-width: 1024px) {
       .sandbox-lower-grid {
         grid-template-columns: 1fr;
@@ -833,11 +1028,13 @@
       flex-direction: column;
       gap: 1.25rem;
     }
+
     .demo-input-group {
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
+
     .demo-label {
       font-size: 12px;
       font-weight: 700;
@@ -847,6 +1044,7 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
+
     .badge-label-right {
       font-size: 9px;
       background: rgba(245, 158, 11, 0.1);
@@ -855,11 +1053,13 @@
       border-radius: 4px;
       border: 1px solid rgba(245, 158, 11, 0.2);
     }
+
     .badge-label-right.green {
       background: rgba(16, 185, 129, 0.1);
       color: var(--success);
       border-color: rgba(16, 185, 129, 0.2);
     }
+
     .demo-input {
       background: rgba(10, 14, 26, 0.75);
       border: 1px solid rgba(255, 255, 255, 0.07);
@@ -870,6 +1070,7 @@
       font-size: 14px;
       transition: var(--transition-fast);
     }
+
     .demo-input:focus {
       outline: none;
       border-color: var(--primary);
@@ -882,6 +1083,7 @@
       gap: 8px;
       margin-top: 8px;
     }
+
     .click-target-btn {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -897,21 +1099,31 @@
       align-items: center;
       gap: 6px;
     }
+
     .click-target-btn i {
       font-size: 16px;
       color: var(--primary);
     }
+
     .click-target-btn:hover {
       background: rgba(6, 182, 212, 0.06);
       border-color: rgba(6, 182, 212, 0.25);
       transform: translateY(-1px);
     }
-    .click-target-btn.pink-btn i { color: var(--accent); }
+
+    .click-target-btn.pink-btn i {
+      color: var(--accent);
+    }
+
     .click-target-btn.pink-btn:hover {
       background: rgba(236, 72, 153, 0.06);
       border-color: rgba(236, 72, 153, 0.25);
     }
-    .click-target-btn.violet-btn i { color: var(--secondary); }
+
+    .click-target-btn.violet-btn i {
+      color: var(--secondary);
+    }
+
     .click-target-btn.violet-btn:hover {
       background: rgba(139, 92, 246, 0.06);
       border-color: rgba(139, 92, 246, 0.25);
@@ -928,6 +1140,7 @@
       flex-grow: 1;
       height: 160px;
     }
+
     .terminal-header {
       background: rgba(255, 255, 255, 0.02);
       padding: 8px 16px;
@@ -936,24 +1149,37 @@
       align-items: center;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
+
     .terminal-dots {
       display: flex;
       gap: 6px;
     }
+
     .terminal-dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
     }
-    .terminal-dot.red { background-color: var(--danger); }
-    .terminal-dot.yellow { background-color: var(--warning); }
-    .terminal-dot.green { background-color: var(--success); }
+
+    .terminal-dot.red {
+      background-color: var(--danger);
+    }
+
+    .terminal-dot.yellow {
+      background-color: var(--warning);
+    }
+
+    .terminal-dot.green {
+      background-color: var(--success);
+    }
+
     .terminal-title {
       font-family: var(--font-mono);
       font-size: 11px;
       color: var(--text-secondary);
       letter-spacing: 0.5px;
     }
+
     .terminal-output {
       padding: 14px 16px;
       font-family: var(--font-mono);
@@ -971,17 +1197,20 @@
       gap: 12px;
       margin-bottom: 1rem;
     }
+
     @media (max-width: 600px) {
       .api-inputs-grid {
         grid-template-columns: 1fr;
       }
     }
+
     .api-buttons-flow {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
       margin-bottom: 1rem;
     }
+
     .api-btn {
       background: rgba(6, 182, 212, 0.06);
       border: 1px solid rgba(6, 182, 212, 0.25);
@@ -994,27 +1223,32 @@
       cursor: pointer;
       transition: var(--transition-fast);
     }
+
     .api-btn:hover {
       background: rgba(6, 182, 212, 0.15);
       border-color: var(--primary);
       box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
     }
+
     .api-btn.secondary {
       background: rgba(255, 255, 255, 0.03);
       border-color: rgba(255, 255, 255, 0.08);
       color: var(--text-secondary);
     }
+
     .api-btn.secondary:hover {
       background: rgba(255, 255, 255, 0.08);
       border-color: rgba(255, 255, 255, 0.18);
       color: var(--text-primary);
       box-shadow: none;
     }
+
     .api-btn.danger {
       background: rgba(239, 68, 68, 0.05);
       border-color: rgba(239, 68, 68, 0.2);
       color: var(--danger);
     }
+
     .api-btn.danger:hover {
       background: rgba(239, 68, 68, 0.12);
       border-color: var(--danger);
@@ -1027,6 +1261,7 @@
       margin: 0 auto 4rem;
       padding: 0 2rem;
     }
+
     .table-container {
       background: var(--bg-card);
       backdrop-filter: blur(16px);
@@ -1036,16 +1271,20 @@
       overflow-x: auto;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
+
     .compare-table {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
       font-size: 14px;
     }
-    .compare-table th, .compare-table td {
+
+    .compare-table th,
+    .compare-table td {
       padding: 1.2rem 1.5rem;
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     }
+
     .compare-table th {
       font-weight: 700;
       color: var(--text-secondary);
@@ -1054,29 +1293,36 @@
       text-transform: uppercase;
       letter-spacing: 1px;
     }
+
     .compare-table tr:last-child td {
       border-bottom: none;
     }
+
     .compare-table tr:hover td {
       background: rgba(255, 255, 255, 0.01);
     }
+
     .highlight-col {
       color: var(--primary);
       font-weight: 600;
       background: rgba(6, 182, 212, 0.02);
     }
+
     .compare-table td.highlight-col {
       border-left: 1px solid rgba(6, 182, 212, 0.05);
       border-right: 1px solid rgba(6, 182, 212, 0.05);
     }
+
     .bold-cell {
       font-weight: 700;
       color: var(--text-primary);
     }
+
     .icon-success {
       color: var(--success);
       font-weight: bold;
     }
+
     .icon-fail {
       color: var(--text-muted);
     }
@@ -1087,6 +1333,7 @@
       margin: 0 auto 5rem;
       padding: 0 2rem;
     }
+
     .docs-tab-header {
       display: flex;
       gap: 12px;
@@ -1095,9 +1342,11 @@
       overflow-x: auto;
       scrollbar-width: none;
     }
+
     .docs-tab-header::-webkit-scrollbar {
       display: none;
     }
+
     .tab-trigger {
       background: none;
       border: none;
@@ -1110,12 +1359,15 @@
       transition: var(--transition-fast);
       white-space: nowrap;
     }
+
     .tab-trigger:hover {
       color: var(--text-primary);
     }
+
     .tab-trigger.active {
       color: var(--primary);
     }
+
     .tab-trigger.active::after {
       content: '';
       position: absolute;
@@ -1126,17 +1378,26 @@
       background-color: var(--primary);
       box-shadow: 0 0 10px var(--primary);
     }
-    
+
     .tab-content {
       display: none;
       animation: tabFadeIn 0.4s ease;
     }
+
     .tab-content.active {
       display: block;
     }
+
     @keyframes tabFadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .code-editor-mock {
@@ -1146,29 +1407,34 @@
       overflow: hidden;
       box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
     }
+
     .code-editor-header {
-      background: rgba(255,255,255,0.02);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       padding: 12px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
+
     .code-editor-dots {
       display: flex;
       gap: 6px;
     }
+
     .code-editor-dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.15);
     }
+
     .code-editor-title {
       font-family: var(--font-mono);
       font-size: 12px;
       color: var(--text-secondary);
     }
+
     .code-editor-pre {
       padding: 24px;
       overflow-x: auto;
@@ -1179,13 +1445,34 @@
     }
 
     /* Code Syntax Highlighting Colors */
-    .c-comment { color: #5c7080; font-style: italic; }
-    .c-keyword { color: #f472b6; }
-    .c-string { color: #34d399; }
-    .c-number { color: #fbbf24; }
-    .c-function { color: #60a5fa; }
-    .c-tag { color: #f87171; }
-    .c-attr { color: #fb7185; }
+    .c-comment {
+      color: #5c7080;
+      font-style: italic;
+    }
+
+    .c-keyword {
+      color: #f472b6;
+    }
+
+    .c-string {
+      color: #34d399;
+    }
+
+    .c-number {
+      color: #fbbf24;
+    }
+
+    .c-function {
+      color: #60a5fa;
+    }
+
+    .c-tag {
+      color: #f87171;
+    }
+
+    .c-attr {
+      color: #fb7185;
+    }
 
     /* Custom Toast Container */
     .toasts-box {
@@ -1198,6 +1485,7 @@
       z-index: 1000;
       max-width: 320px;
     }
+
     .custom-toast {
       background: rgba(13, 17, 30, 0.95);
       backdrop-filter: blur(10px);
@@ -1215,17 +1503,41 @@
       font-weight: 500;
       animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards, toastOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) 3s forwards;
     }
-    .custom-toast.success { border-left-color: var(--success); }
-    .custom-toast.warning { border-left-color: var(--warning); }
-    .custom-toast.danger { border-left-color: var(--danger); }
-    
-    @keyframes toastIn {
-      from { transform: translateX(120%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+
+    .custom-toast.success {
+      border-left-color: var(--success);
     }
+
+    .custom-toast.warning {
+      border-left-color: var(--warning);
+    }
+
+    .custom-toast.danger {
+      border-left-color: var(--danger);
+    }
+
+    @keyframes toastIn {
+      from {
+        transform: translateX(120%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
     @keyframes toastOut {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(120%); opacity: 0; }
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      to {
+        transform: translateX(120%);
+        opacity: 0;
+      }
     }
 
     /* Footer styling */
@@ -1235,6 +1547,7 @@
       padding: 4rem 2rem 3rem;
       margin-top: 6rem;
     }
+
     .footer-wrap {
       max-width: 1300px;
       margin: 0 auto;
@@ -1242,6 +1555,7 @@
       flex-direction: column;
       gap: 2rem;
     }
+
     .footer-upper {
       display: flex;
       justify-content: space-between;
@@ -1249,24 +1563,29 @@
       flex-wrap: wrap;
       gap: 2rem;
     }
+
     .footer-desc-block {
       max-width: 400px;
     }
+
     .footer-desc-block p {
       font-size: 13px;
       color: var(--text-secondary);
       margin-top: 10px;
       line-height: 1.6;
     }
+
     .footer-links-block {
       display: flex;
       gap: 4rem;
     }
+
     .footer-link-col {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
+
     .footer-col-title {
       font-size: 11px;
       font-weight: 700;
@@ -1275,15 +1594,18 @@
       color: var(--text-secondary);
       margin-bottom: 5px;
     }
+
     .footer-link-col a {
       color: var(--text-muted);
       text-decoration: none;
       font-size: 13px;
       transition: var(--transition-fast);
     }
+
     .footer-link-col a:hover {
       color: var(--primary);
     }
+
     .footer-lower {
       border-top: 1px solid rgba(255, 255, 255, 0.03);
       padding-top: 1.5rem;
@@ -1295,10 +1617,12 @@
       font-size: 12px;
       color: var(--text-muted);
     }
+
     .footer-lower a {
       color: var(--text-secondary);
       text-decoration: none;
     }
+
     .footer-lower a:hover {
       color: var(--primary);
     }
@@ -1311,6 +1635,7 @@
       display: inline-block;
       vertical-align: middle;
     }
+
     .svg-icon-large {
       width: 20px;
       height: 20px;
@@ -1320,6 +1645,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <!-- Loading Screen -->
@@ -1344,7 +1670,9 @@
         <a href="#docs" class="nav-item">Documentation</a>
         <a href="https://github.com/EbParsa/Telesense" target="_blank" class="btn-github-nav">
           <svg class="svg-icon" viewBox="0 0 16 16">
-            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+            </path>
           </svg>
           GitHub
         </a>
@@ -1358,26 +1686,30 @@
       <div class="status-dot"></div>
       <span id="status-badge-text">Telesense Active</span>
     </div>
-    
+
     <h1 class="hero-h1">
       Behavioral Telemetry<br />
       <span class="gradient-text">Beautifully Captured.</span>
     </h1>
-    
+
     <p class="hero-lead">
-      A lightweight, zero-dependency behavioral telemetry SDK designed by <strong>EbParsa</strong> and <strong>MKH_User</strong>. 
-      Capture clicks, scrolls, keypresses, and heatmap data with a drop-in script tag or clean JS API in less than <strong>20 kB</strong>.
+      A lightweight, zero-dependency behavioral telemetry SDK designed by <strong>EbParsa</strong> and
+      <strong>MKH_User</strong>.
+      Capture clicks, scrolls, keypresses, and heatmap data with a drop-in script tag or clean JS API in less than
+      <strong>20 kB</strong>.
     </p>
-    
+
     <div class="hero-buttons">
       <a href="#dashboard" class="btn-primary">
         Launch Live Demo
-        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
           <line x1="5" y1="12" x2="19" y2="12"></line>
           <polyline points="12 5 19 12 12 19"></polyline>
         </svg>
       </a>
-      <a href="#docs" class="btn-github-nav" style="padding: 0.85rem 2rem; border-radius: var(--radius-md); font-size: 15px;">
+      <a href="#docs" class="btn-github-nav"
+        style="padding: 0.85rem 2rem; border-radius: var(--radius-md); font-size: 15px;">
         View Setup Guide
       </a>
     </div>
@@ -1493,7 +1825,8 @@
         <div class="panel-header">
           <div>
             <h3 class="panel-title">
-              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary);">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="color:var(--primary);">
                 <line x1="4" y1="9" x2="20" y2="9"></line>
                 <line x1="4" y1="15" x2="20" y2="15"></line>
                 <line x1="10" y1="3" x2="8" y2="21"></line>
@@ -1537,7 +1870,8 @@
         <div class="panel-header">
           <div>
             <h3 class="panel-title">
-              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--secondary);">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="color:var(--secondary);">
                 <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                 <polyline points="2 17 12 22 22 17"></polyline>
                 <polyline points="2 12 12 17 22 12"></polyline>
@@ -1552,14 +1886,16 @@
           <div class="sandbox-grid"></div>
           <canvas class="sandbox-canvas" id="sandbox-canvas"></canvas>
           <div class="sandbox-intro" id="sandbox-intro">
-            <svg class="svg-icon-large" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" style="width:40px; height:40px;">
+            <svg class="svg-icon-large" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"
+              style="width:40px; height:40px;">
               <path d="M15 18H9.5a5.5 5.5 0 0 1-5.5-5.5v0A5.5 5.5 0 0 1 9.5 7H15"></path>
               <path d="M15 12h.01"></path>
               <path d="M19 12h.01"></path>
               <path d="M10 12h.01"></path>
             </svg>
             <p style="margin-top: 10px; font-weight: 600;">Hover & Draw Here</p>
-            <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Mouse moves draw blue glows, touches draw pink glows</p>
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Mouse moves draw blue glows, touches
+              draw pink glows</p>
           </div>
         </div>
 
@@ -1595,7 +1931,8 @@
         <div class="panel-header">
           <div>
             <h3 class="panel-title">
-              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--warning);">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="color:var(--warning);">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
@@ -1661,7 +1998,8 @@
         <div class="panel-header">
           <div>
             <h3 class="panel-title">
-              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary);">
+              <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="color:var(--primary);">
                 <polyline points="16 18 22 12 16 6"></polyline>
                 <polyline points="8 6 2 12 8 18"></polyline>
               </svg>
@@ -1675,11 +2013,13 @@
           <div class="api-inputs-grid">
             <div class="demo-input-group">
               <label class="demo-label">Custom Event Name</label>
-              <input type="text" class="demo-input" id="api-evt-name" value="user_signup" style="font-family: var(--font-mono); font-size: 13px;" />
+              <input type="text" class="demo-input" id="api-evt-name" value="user_signup"
+                style="font-family: var(--font-mono); font-size: 13px;" />
             </div>
             <div class="demo-input-group">
               <label class="demo-label">Payload (JSON)</label>
-              <input type="text" class="demo-input" id="api-evt-data" value='{"plan": "enterprise", "source": "web"}' style="font-family: var(--font-mono); font-size: 13px;" />
+              <input type="text" class="demo-input" id="api-evt-data" value='{"plan": "enterprise", "source": "web"}'
+                style="font-family: var(--font-mono); font-size: 13px;" />
             </div>
           </div>
 
@@ -1692,13 +2032,16 @@
           </div>
 
           <!-- Switch to toggle tracking (Start / Stop) -->
-          <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:12px; border-radius:var(--radius-sm); border:1px solid rgba(255,255,255,0.04);">
+          <div
+            style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:12px; border-radius:var(--radius-sm); border:1px solid rgba(255,255,255,0.04);">
             <div style="display:flex; flex-direction:column; gap:2px;">
               <span style="font-size:12px; font-weight:700;">TRACKING LISTENERS</span>
-              <span style="font-size:11px; color:var(--text-secondary);">Toggle active DOM telemetry capture listeners</span>
+              <span style="font-size:11px; color:var(--text-secondary);">Toggle active DOM telemetry capture
+                listeners</span>
             </div>
             <div style="display:flex; gap:10px;">
-              <button class="panel-btn" id="btn-toggle-listen" onclick="toggleTrackingListeners()" style="border-color:var(--primary); color:var(--primary);">
+              <button class="panel-btn" id="btn-toggle-listen" onclick="toggleTrackingListeners()"
+                style="border-color:var(--primary); color:var(--primary);">
                 ACTIVE
               </button>
             </div>
@@ -1726,7 +2069,7 @@
         <p class="section-subtitle">How Telesense stacks up against legacy analytics and session recorders.</p>
       </div>
     </div>
-    
+
     <div class="compare-section">
       <div class="table-container">
         <table class="compare-table">
@@ -1938,11 +2281,11 @@ tele.<span class="c-function">config</span>({
             <div class="logo-title">Tele<span>sense</span></div>
           </a>
           <p>
-            Telesense is an open-source, ultra-lightweight behavioral analytics library. 
+            Telesense is an open-source, ultra-lightweight behavioral analytics library.
             It captures visitor signals securely without bloating client bundle size.
           </p>
         </div>
-        
+
         <div class="footer-links-block">
           <div class="footer-link-col">
             <span class="footer-col-title">Documentation</span>
@@ -1960,7 +2303,8 @@ tele.<span class="c-function">config</span>({
       </div>
 
       <div class="footer-lower">
-        <span>Designed & developed by <a href="https://github.com/EbParsa" target="_blank">EbParsa</a> & <a href="https://github.com/mkhuser" target="_blank">MKH_User</a></span>
+        <span>Designed & developed by <a href="https://github.com/EbParsa" target="_blank">EbParsa</a> & <a
+            href="https://github.com/mkhuser" target="_blank">MKH_User</a></span>
         <span>Released under the MIT License. Copyright © 2026.</span>
       </div>
     </div>
@@ -1970,7 +2314,8 @@ tele.<span class="c-function">config</span>({
   <div class="toasts-box" id="toast-container"></div>
 
   <!-- Load SDK -->
-  <script src="../dist/tele.umd.js" onerror="this.onerror=null; this.src='https://cdn.jsdelivr.net/npm/telesense/dist/tele.umd.min.js';"></script>
+  <script src="../dist/tele.umd.js"
+    onerror="this.onerror=null; this.src='https://cdn.jsdelivr.net/npm/telesense/dist/tele.umd.min.js';"></script>
 
   <!-- Script for UI logic & tracking -->
   <script>
@@ -1987,15 +2332,15 @@ tele.<span class="c-function">config</span>({
     let localEventHistory = [];
 
     tele.config({
-      onFlush: function(events) {
+      onFlush: function (events) {
         // Keep a copy in memory and localStorage for persistence/visual inspection
         const key = 'tele_demo_events';
         try {
           const curr = JSON.parse(localStorage.getItem(key) || '[]');
           const next = curr.concat(events).slice(-1000);
           localStorage.setItem(key, JSON.stringify(next));
-        } catch (_) {}
-        
+        } catch (_) { }
+
         // Show success toast on auto-flush or manual flush
         showToast('Flushed ' + events.length + ' events to storage!', 'success');
       }
@@ -2020,7 +2365,7 @@ tele.<span class="c-function">config</span>({
       const box = document.getElementById('toast-container');
       const toast = document.createElement('div');
       toast.className = `custom-toast ${type}`;
-      
+
       let icon = `
         <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -2045,9 +2390,12 @@ tele.<span class="c-function">config</span>({
         `;
       }
 
-      toast.innerHTML = icon + `<span>${msg}</span>`;
+      toast.innerHTML = icon;
+      const msgSpan = document.createElement('span');
+      msgSpan.textContent = msg;
+      toast.appendChild(msgSpan);
       box.appendChild(toast);
-      
+
       // Auto-remove toast from DOM after animation finishes
       setTimeout(() => {
         toast.remove();
@@ -2063,7 +2411,7 @@ tele.<span class="c-function">config</span>({
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
     }
-    
+
     // Initial resize and bind resize handler
     resizeHeatmapCanvas();
     window.addEventListener('resize', resizeHeatmapCanvas);
@@ -2073,7 +2421,7 @@ tele.<span class="c-function">config</span>({
       // Map screen coords relative to canvas container
       const localX = (x - rect.left) * (canvas.width / rect.width);
       const localY = (y - rect.top) * (canvas.height / rect.height);
-      
+
       // Ensure the coordinates fall within the canvas sandbox bounds
       if (localX < 0 || localY < 0 || localX > canvas.width || localY > canvas.height) return;
 
@@ -2086,7 +2434,7 @@ tele.<span class="c-function">config</span>({
       // Draw glowing gradient particle
       const radius = isTouch ? 14 : 10;
       const gradient = ctx.createRadialGradient(localX, localY, 1, localX, localY, radius);
-      
+
       if (isTouch) {
         gradient.addColorStop(0, 'rgba(236, 72, 153, 0.45)');
         gradient.addColorStop(1, 'rgba(236, 72, 153, 0)');
@@ -2110,7 +2458,7 @@ tele.<span class="c-function">config</span>({
     function renderEventRow(ev) {
       const feed = document.getElementById('log-feed');
       const emptyState = document.getElementById('log-empty-state');
-      
+
       if (emptyState) {
         emptyState.remove();
       }
@@ -2123,7 +2471,7 @@ tele.<span class="c-function">config</span>({
 
       let summaryContent = '';
       let badgeClass = 'badge-custom';
-      
+
       // Classify event badges
       const touchTypes = ['touchstart', 'touchmove', 'touchend'];
       if (ev.type === 'click') badgeClass = 'badge-click';
@@ -2190,7 +2538,7 @@ tele.<span class="c-function">config</span>({
     }
 
     // ── Subscribe to Telesense SDK events ────────────────────────────────────
-    tele.on('*', function(ev) {
+    tele.on('*', function (ev) {
       countTotal++;
       allTelemetryEvents.push(ev);
 
@@ -2218,7 +2566,7 @@ tele.<span class="c-function">config</span>({
     document.getElementById('feed-filters').addEventListener('click', (e) => {
       const btn = e.target.closest('.pill-btn');
       if (!btn) return;
-      
+
       document.querySelectorAll('.pill-btn').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
       activeFilter = btn.dataset.filter;
@@ -2226,7 +2574,7 @@ tele.<span class="c-function">config</span>({
       // Clear & Re-render log history based on filters
       const feed = document.getElementById('log-feed');
       feed.innerHTML = '';
-      
+
       const touchTypes = ['touchstart', 'touchmove', 'touchend'];
       const filtered = allTelemetryEvents.filter(ev => {
         if (activeFilter === 'all') return true;
@@ -2254,7 +2602,7 @@ tele.<span class="c-function">config</span>({
 
     // ── API Console Play Button Actions ──────────────────────────────────────
     const consoleOut = document.getElementById('terminal-out');
-    
+
     function logToConsole(text) {
       consoleOut.textContent = text;
       consoleOut.scrollTop = consoleOut.scrollHeight;
@@ -2269,9 +2617,9 @@ tele.<span class="c-function">config</span>({
       } catch (_) {
         data = { raw: rawPayload };
       }
-      
+
       tele.track(type, data);
-      
+
       logToConsole(`tele.track("${type}", ${JSON.stringify(data, null, 2)});\n\n// ✓ Event tracked successfully and added to queue.`);
       showToast('Custom event tracked: ' + type);
     }
@@ -2336,7 +2684,7 @@ tele.<span class="c-function">config</span>({
     function switchTab(evt, tabId) {
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
       document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
-      
+
       document.getElementById(tabId).classList.add('active');
       evt.currentTarget.classList.add('active');
     }
@@ -2345,13 +2693,13 @@ tele.<span class="c-function">config</span>({
     function copyInstallCmd() {
       const cmdText = document.getElementById('terminal-install-cmd').innerText;
       navigator.clipboard.writeText(cmdText);
-      
+
       const copyBtnText = document.getElementById('copy-btn-text');
       copyBtnText.textContent = 'Copied!';
       setTimeout(() => {
         copyBtnText.textContent = 'Copy';
       }, 2000);
-      
+
       showToast('Installation command copied to clipboard');
     }
 
@@ -2359,4 +2707,5 @@ tele.<span class="c-function">config</span>({
     setInterval(updateStatsDashboard, 800);
   </script>
 </body>
+
 </html>
