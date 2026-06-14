@@ -302,8 +302,8 @@
       if (cfg.capture.keydown) {
         handlers.keydown = (e) => record('keydown', {
           key:    isSensitive(e.target) ? '[masked]' : e.key,
-          code:   e.code,
-          target: isSensitive(e.target) ? '[sensitive]' : elSummary(e.target),
+          code:   isSensitive(e.target) ? '[masked]' : e.code,
+          target: elSummary(e.target),
         });
         document.addEventListener('keydown', handlers.keydown);
       }
@@ -311,8 +311,8 @@
       if (cfg.capture.keyup) {
         handlers.keyup = (e) => record('keyup', {
           key:    isSensitive(e.target) ? '[masked]' : e.key,
-          code:   e.code,
-          target: isSensitive(e.target) ? '[sensitive]' : elSummary(e.target),
+          code:   isSensitive(e.target) ? '[masked]' : e.code,
+          target: elSummary(e.target),
         });
         document.addEventListener('keyup', handlers.keyup);
       }
