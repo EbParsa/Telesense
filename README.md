@@ -2,11 +2,11 @@
 
 > Lightweight, zero-dependency behavioural telemetry SDK. Drop one script tag — get clicks, scrolls, keypresses, heatmap data, and a clean JS API.
 
-[![CI](https://github.com/EbParsa/Telesense/actions/workflows/ci.yml/badge.svg)](https://github.com/EbParsa/Telesense/actions)
-[![npm version](https://img.shields.io/npm/v/telesense.svg)](https://www.npmjs.com/package/telesense)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/telesense)](https://bundlephobia.com/package/telesense)
-[![license](https://img.shields.io/github/license/EbParsa/telesense)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-ready-blue?logo=typescript)](src/tele.d.ts)
+[![demo](https://img.shields.io/website?url=https%3A%2F%2FEbParsa.github.io%2FTelesense&up_message=live&up_color=22bb00&down_message=updating...&down_color=ea7600&style=flat-square&logo=github&label=demo&labelColor=black)](https://EbParsa.github.io/Telesense)
+[![npm version](https://img.shields.io/npm/v/telesense?style=flat-square&logo=npm&labelColor=black&color=darkviolet)](https://www.npmjs.com/package/telesense)
+[![script tag size](https://img.shields.io/badge/minified-%3C20KB-f7df1e?style=flat-square&logo=javascript&labelColor=black)](https://EbParsa.github.io/Telesense)
+[![license](https://img.shields.io/badge/license-MIT-f03c2e?style=flat-square&logo=git&labelColor=black)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-ready-3178c6?style=flat-square&logo=typescript&labelColor=black)](https://www.npmjs.com/package/telesense)
 
 **[Live demo →](https://EbParsa.github.io/Telesense)**
 
